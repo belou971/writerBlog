@@ -91,7 +91,7 @@ CREATE TABLE t_post (
   post_image             VARCHAR(100),
   post_nb_visit          BIGINT(20)                                     NOT NULL             DEFAULT 0,
   post_date_creation     DATETIME                                       NOT NULL,
-  post_date_modification DATETIME                                       NOT NULL,
+  post_date_modification DATETIME                                       NULL,
   FOREIGN KEY (post_id_author) REFERENCES t_admin (adm_id)
 )
   ENGINE = innodb
