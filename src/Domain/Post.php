@@ -81,7 +81,26 @@ namespace writerBlog\Domain {
          * @var DateTime $modification_date represents date and time the post is modified
          */
         private $modification_date;
+        /**
+         * @var string $category represents the category that post belongs to
+         */
+        private $s_category;
 
+        /**
+         * @return string
+         */
+        public function getSCategory()
+        {
+            return $this->s_category;
+        }
+
+        /**
+         * @param string $s_category
+         */
+        public function setSCategory($s_category)
+        {
+            $this->s_category = $s_category;
+        }
 
         /**
          * @return int Returns the post id

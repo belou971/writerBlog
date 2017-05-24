@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Bienvenue sur mon blog{% endblock %}
+
+{% block content %}
+    {% for post in posts %}
+        <div class="post-preview">
+            <div class="post-preview-part1">
+                <span class="category-info">{{ post.getSCategory }}</span>
+                <a href="{{ path('home') }}">
+                    <h2 class="post-title">{{ post.getSTitle }}</h2>
+                </a>
+                <ul class="post-meta">
+                    <li>
+                        {{ post.getCreationDate }}
+                    </li>
+                    <li>
+                        <a href="#">{{ post.getSAuthor }}</a>
+                    </li>
+                    <li>
+                        <a href="#">Laisser un message</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="post-preview-part2">
+                <p>
+                    {{ post.getSExtract }}...
+                    <a href="#" class="continue">lire la suite</a>
+                </p>
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

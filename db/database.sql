@@ -30,7 +30,7 @@ DROP TABLE IF EXISTS t_blog;
 
 CREATE TABLE t_blog (
   blo_id    BIGINT(10)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  blo_title VARCHAR(10) NOT NULL
+  blo_title VARCHAR(20) NOT NULL
 )
   ENGINE = innodb
   CHARACTER SET utf8
@@ -92,7 +92,9 @@ CREATE TABLE t_post (
   post_nb_visit          BIGINT(20)                                     NOT NULL             DEFAULT 0,
   post_date_creation     DATETIME                                       NOT NULL,
   post_date_modification DATETIME                                       NULL,
-  FOREIGN KEY (post_id_author) REFERENCES t_admin (adm_id)
+  post_category_id       BIGINT(10)                                     NOT NULL,
+  FOREIGN KEY (post_id_author) REFERENCES t_admin (adm_id),
+  FOREIGN KEY (post_category_id) REFERENCES t_categorie (cat_id)
 )
   ENGINE = innodb
   CHARACTER SET utf8
