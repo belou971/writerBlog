@@ -15,3 +15,11 @@ $app->get('/', function () use ($app) {
     return $app['twig']->render('index.html.twig', array('posts' => $posts,
                                                          'blog' => $blogInfo));
 })->bind('home');
+
+//Get Post(Id) page
+$app->get('/post/{id}', function ($id) use ($app) {
+
+    $post = $app['dao.post']->getPost($id);
+    print_r($post);
+    return "eeee";
+})->bind('post');

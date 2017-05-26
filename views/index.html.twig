@@ -25,9 +25,10 @@
             <div class="post-preview-part2">
                 <p>
                     {{ post.getSExtract }}...
-                    <a href="#" class="continue">lire la suite</a>
+                    <a href="{{ path('post', {'id': post.getIId}) }}" class="continue">lire la suite</a>
                 </p>
             </div>
         </div>
     {% endfor %}
 {% endblock %}
+

@@ -1,0 +1,228 @@
+@media (min-width: 768px){
+    .navbar .navbar-header,
+    .navbar-collapse {
+        float:none;
+        display:inline-block;
+        vertical-align: top;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    div.navbar-collapse.collapse {
+        display:inline-block!important;
+    }
+}
+
+.intro-header {
+    margin-bottom: 0 !important;
+    background-size:contain !important;
+    background: center right no-repeat #085394;
+}
+
+.navbar-default {
+    background-color: #7f9ad1!important;
+    border-color: #e7e7e7;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: #fff !important;
+}
+
+.navbar-default .navbar-nav > li:hover{
+    background-color: #f9bf22!important;
+}
+
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus {
+   /* color: #333!important;*/
+    background-color: transparent !important;
+}
+
+#my-sticky {
+    width: 100%;
+}
+
+#my-sticky.affix {
+    position: fixed;
+    top: 0;
+    z-index: 10;
+}
+
+.main-contain {
+    border-right: solid 1px #7f9ad1;
+}
+
+.sidebar-module > h4 {
+    padding: 0.5em;
+    border: solid 1px #e7e7e7;
+    background-color: #085394;
+    color: #ffffff;
+    text-align: center;
+}
+
+.post-preview {
+    border-bottom: solid 1px #7f9ad1;
+    margin: 0 0 4.5em;
+    padding: 0 0 3em;
+    position: relative;
+}
+
+.post-preview-part1 {
+    width: 100%;
+    text-align: center;
+}
+
+.post-preview-part1:after {
+    background-color: #f3f3f3;
+    content: "";
+    display: block;
+    margin: 0.5em auto;
+    width: 50%;
+    height: 2px;
+}
+
+.post-preview > .post-preview-part1 > a,
+ footer a,
+.sidebar-module a {
+    color: #085394;
+}
+.post-preview > .post-preview-part1 > a:hover,
+.post-preview > .post-preview-part1 > a:focus,
+.sidebar-module a:hover {
+    text-decoration: none;
+    color: #f9bf22;
+}
+.post-preview > .post-preview-part1 > a > .post-title {
+    font-size: 30px;
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.post-preview > .post-meta {
+    color: #777777;
+    font-size: 18px;
+    font-style: italic;
+    margin-top: 0;
+}
+.post-preview > .post-meta > a {
+    text-decoration: none;
+    color: #333333;
+}
+.post-preview > .post-meta > a:hover,
+.post-preview > .post-meta > a:focus {
+    color: #0085A1;
+    text-decoration: underline;
+}
+@media only screen and (min-width: 768px) {
+    .post-preview > a > .post-title {
+        font-size: 36px;
+    }
+}
+
+.post-preview-part1 ul {
+    margin: 0;
+    padding: 0;
+    list-style-type: none;
+}
+
+.post-preview-part1 .post-meta, .category-info {
+    color: #777;
+    font-size: 15px;
+    font-style: italic;
+    margin-top: 0;
+}
+
+.post-preview-part1 .post-meta {
+    color: #777;
+}
+
+.category-info {
+    display: block;
+    color: #085394;
+    text-transform: uppercase;
+    margin: 0 0 0.5em;
+    font-size: 13px;
+}
+
+.post-preview-part1 ul li {
+    display: inline;
+    padding: 0 2em;
+}
+
+.post-preview-part1 ul li a,
+.post-preview-part1 ul li a:focus,
+.sidebar-module a:focus {
+    color: #777;
+    text-decoration: none;
+}
+
+.post-preview-part1 ul li a:hover {
+    color: #7f9ad1;
+    text-decoration: none;
+}
+
+.post-preview-part2 {
+    position: relative;
+}
+
+a.continue {
+    box-shadow: inset 0 -80px 80px -5px rgba(255, 255, 255, 0.75);
+    color: #7f9ad1;
+    font-weight: bold;
+    font-style: italic;
+    display: block;
+    width: 100%;
+    height: 124px;
+    position: absolute;
+    bottom: -32px;
+    padding-top: 100px;
+    z-index: 1;
+    text-align: center;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+a.continue:hover,
+a.continue:focus,
+footer a:hover {
+    color: #f9bf22;
+}
+
+a.continue:focus,
+footer a:focus {
+    color: #9e9e9e;
+}
+
+footer {
+    padding: 10px 0 !important;
+    margin-top: 20px;
+    background-color:#fff;
+    color: #ffffff;
+    border-top: solid 1px #7f9ad1;
+}
+
+.form-suivre {
+    margin-bottom: 1em;
+
+}
+
+.input-group-addon {
+    color: #eee !important;
+    background-color: #7f9ad1;
+}
+
+.form-control {
+    color: #085394 !important;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-default:hover,
+.btn-default:focus {
+    background-color: #f9bf22!important;
+    border: 1px solid #e7e7e7!important;
+}
+
+.sidebar-module:last-child {
+    margin-top:40px;
+}

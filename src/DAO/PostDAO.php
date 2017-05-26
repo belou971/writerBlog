@@ -22,7 +22,6 @@ namespace writerBlog\DAO;
          * @var \Doctrine\DBAL\Connection
          */
         private $db;
-        private $numberOfPost;
 
         /**
          * Constructor
@@ -32,7 +31,6 @@ namespace writerBlog\DAO;
         public function __construct(Connection $db)
         {
             $this->db = $db;
-            $this->numberOfPost = 0;
         }
 
         /**
@@ -60,7 +58,6 @@ namespace writerBlog\DAO;
             }
 
             $results = $statement->fetchAll();
-            $this->numberOfPost = $statement->rowCount();
 
             // Convert query result to an array of domain objects
             $posts = array();
@@ -106,12 +103,27 @@ namespace writerBlog\DAO;
             return $posts;
         }
 
-        /**
-         * @return int
-         */
-        public function getNumberOfPost()
+
+        public function getPost($id)
         {
-            return $this->numberOfPost;
+            $queryBuilder = $this->db->createQueryBuilder();
+            $queryBuilder->select('p.post_id', 'p.post_title', 'p.post_content',
+                'p.post_extract', 'p.post_nb_visit', 'p.post_date_modification',
+                'p.post_image', 'p.post_date_creation', 'a.adm_web_name', 'cat.cat_name')
+                ->from('t_post', 'p')
+                ->innerJoin('p', 't_admin', 'a', 'p.post_id_author = a.adm_id')
+                ->innerJoin('p', 't_categorie', 'cat', 'p.post_category_id = cat.cat_id')
+                ->where('p.post_id = ?')
+                ->setParameter(0, $id);
+
+            $statement = $queryBuilder->execute();
+            if (is_int($statement)) {
+                return null;
+            }
+
+            $result = $statement->fetch();
+
+            return $this->buildPost($result);
         }
 
         /**
@@ -122,7 +134,7 @@ namespace writerBlog\DAO;
          */
         private function buildPost(array $row)
         {
-            $Post = new Post();
+            $Post = new Post($row['post_id']);
 
             $Post->setSTitle($row['post_title']);
             $Post->setSContent($row['post_content']);

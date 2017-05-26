@@ -25,8 +25,9 @@ namespace writerBlog\Domain {
         /**
          * Post constructor.
          */
-        public function __construct()
+        public function __construct($id)
         {
+            $this->i_id = $id;
             $this->s_title = null;
             $this->s_author = null;
             $this->s_content = null;
