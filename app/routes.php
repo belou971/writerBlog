@@ -67,6 +67,36 @@ $app->post('/update', function (Request $request) use($app) {
     return $response;
 });
 
+//Path to publish a post by Id
+$app->get('/publish/post/{id}', function ($id) use($app) {
+    $count = $app['dao.post']->publishPost($id);
+
+    $msg = $count.' row(s) with post status modified!\n';
+
+    if($count > 0) {
+        $response = new Response($msg, 201);
+    }
+    else {
+        $response = new Response($msg, 404);
+    }
+    return $response;
+});
+
+//Path to hide a post by Id
+$app->get('hide/post/{id}', function ($id) use($app) {
+    $count = $app['dao.post']->hidePost($id);
+
+    $msg = $count.' row(s) with post status modified!\n';
+
+    if($count > 0) {
+        $response = new Response($msg, 201);
+    }
+    else {
+        $response = new Response($msg, 404);
+    }
+    return $response;
+});
+
 //Delete a post identified by its Id
 $app->delete('/post/{id}', function ($id) use($app) {
    $countDeletion = $app['dao.post']->deletePost($id);

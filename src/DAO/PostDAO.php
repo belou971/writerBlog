@@ -157,31 +157,37 @@ namespace writerBlog\DAO;
             return $this->update($post);
         }
 
-        /**
-         * @param $id
-         * @return \Doctrine\DBAL\Driver\Statement|int
-         */
-        public function deletePost($id)
-        {
 
-            return $this->delete($id);
+        public function publishPost($id)
+        {
+            return $this->updatePostStatus($id, EPostStatus::PUBLISHED);
+        }
+
+        public function hidePost($id)
+        {
+            return $this->updatePostStatus($id, EPostStatus::NOT_PUBLISHED);
         }
 
         /**
          * @param $id
          * @return \Doctrine\DBAL\Driver\Statement|int
          */
-        private function delete($id) {
+        public function deletePost($id) {
 
+            return $this->updatePostStatus($id, EPostStatus::DISABLED);
+        }
+
+
+        private function updatePostStatus($id, $new_status)
+        {
             $queryBuilder = $this->db->createQueryBuilder();
-            $queryBuilder->delete('t_post')
+            $queryBuilder->update('t_post', 'p')
+                ->set('p.post_status', '?')
                 ->where('post_id = ?')
-                ->setParameter(0, $id);
+                ->setParameter(0, $new_status)
+                ->setParameter(1, $id);
 
-            $result = $queryBuilder->execute();
-            var_dump($result);
-
-            return $result;
+            return $queryBuilder->execute();
         }
 
         /**
