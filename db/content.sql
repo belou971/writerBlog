@@ -1,5 +1,7 @@
 INSERT INTO t_admin (adm_login, adm_email, adm_pwd, adm_web_name) VALUES ('adminproj3', 'belou.atlantis@gmail.com', 'test_proj3', 'Eva Cavaldas');
 
+INSERT INTO t_categorie (cat_name) VALUES ('default');
+
 INSERT  INTO t_post (post_title, post_content, post_extract, post_id_author, post_date_creation, post_status, post_category_id)
     VALUES ('Une nouvelle aventure', 'En route vers un nouveau départ! ... Qui sait où cela me m\'amènera.',
     'En route vers un nouveau départ!', 1, '2017/05/12 14:37:00', 'published', 1);
