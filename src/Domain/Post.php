@@ -8,6 +8,8 @@
 namespace writerBlog\Domain {
 
     use DateTime;
+    use Doctrine\DBAL\Driver\PDOConnection;
+    use writerBlog\Domain\Category;
 
 
     /**
@@ -23,20 +25,26 @@ namespace writerBlog\Domain {
     class Post
     {
         /**
+         *
+         */
+        const EXTRACT_SIZE = 150;
+
+        /**
          * Post constructor.
          */
-        public function __construct($id)
+        public function __construct($id=-1)
         {
             $this->i_id = $id;
             $this->s_title = null;
-            $this->s_author = null;
+            $this->id_author = null;
             $this->s_content = null;
             $this->s_extract = null;
             $this->e_status = EPostStatus::NOT_PUBLISHED;
             $this->s_url_image = null;
-            $this->creation_date = date_create();
+            $this->creation_date = null;
             $this->modification_date = null;
             $this->i_nb_visit = 0;
+            $this->id_category = null;
         }
 
         /**
@@ -48,9 +56,9 @@ namespace writerBlog\Domain {
          */
         private $s_title;
         /**
-         * @var string $s_author represents author's name of the post
+         * @var int $id_author represents author id of the post
          */
-        private $s_author;
+        private $id_author;
         /**
          * @var string $s_content represents the post content
          */
@@ -82,25 +90,27 @@ namespace writerBlog\Domain {
          * @var DateTime $modification_date represents date and time the post is modified
          */
         private $modification_date;
-        /**
-         * @var string $category represents the category that post belongs to
-         */
-        private $s_category;
 
         /**
-         * @return string
+         * @var int $id_category represents  the category id of that post belongs to
          */
-        public function getSCategory()
+        private $id_category;
+
+
+        /**
+         * @return int
+         */
+        public function getIdCategory()
         {
-            return $this->s_category;
+            return $this->id_category;
         }
 
         /**
-         * @param string $s_category
+         * @param int $id_category
          */
-        public function setSCategory($s_category)
+        public function setIdCategory($id_category)
         {
-            $this->s_category = $s_category;
+            $this->id_category = $id_category;
         }
 
         /**
@@ -130,20 +140,20 @@ namespace writerBlog\Domain {
         }
 
         /**
-         * @return string Returns the author's name of the post
+         * @return the author id of the post
          */
-        public function getSAuthor()
+        public function getAuthor()
         {
-            return $this->s_author;
+            return $this->id_author;
         }
 
         /**
-         * @param string $s_author Sets the author's name
+         * @param int $authorId Sets the author id
          * @return Post
          */
-        public function setSAuthor($s_author)
+        public function setAuthor($authorId)
         {
-            $this->s_author = $s_author;
+            $this->id_author = $authorId;
             return $this;
         }
 
@@ -162,6 +172,13 @@ namespace writerBlog\Domain {
         public function setSContent($s_content)
         {
             $this->s_content = $s_content;
+
+            if( strlen($this->s_content) <= Post::EXTRACT_SIZE ) {
+                $this->setSExtract($this->s_content);
+            } else {
+                $this->setSExtract(substr($this->s_content, 0, Post::EXTRACT_SIZE));
+            }
+
             return $this;
         }
 
@@ -278,5 +295,4 @@ namespace writerBlog\Domain {
             return "post_id[" . $this->i_id . "] title[" . $this->s_title . "]";
         }
     }
-
 }

@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ post.getSTitle }}{% endblock %}
+
+{% block content %}
+    {% include 'sections/post_header.thml.twig' %}
+
+    <div class="post-content">
+        {{ post.getSContent }}
+    </div>
+    <!-- Social block -->
+    <div class="social">
+        <ul class="list-inline text-center">
+            <li>
+                <a href="#">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-heart fa-stack-1x fa-inverse"></i>
+                            </span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                            </span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                </a>
+            </li>
+            <li>
+                <a href="#">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
+                            </span>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row">
+        <div class="comment-form text-center col-md-12">
+            <h3>Laissez un message</h3>
+            <form>
+                <div class="row">
+                    <div class="form-suivre col-md-12">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputMessage">Name</label>
+                            <textarea class="form-control" id="inputMessage" placeholder="Votre message" rows="4"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-suivre col-md-6 ">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputName">Name</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
+                                <input type="text" class="form-control" id="inputName" placeholder="Votre nom">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-suivre col-md-6">
+                        <div class="form-group">
+                            <label class="sr-only" for="inputEmail">Email</label>
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-envelope fa-fw"></i></span>
+                                <input type="email" class="form-control" id="inputEmail" placeholder="Votre e-mail">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+
+                    </div>
+                </div>
+                <div class="row">
+                    <div class=" form-suivre col-md-12">
+                        <button type="submit" class="btn btn-primary">Valider</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="comment-boxes"></div>
+{% endblock %}

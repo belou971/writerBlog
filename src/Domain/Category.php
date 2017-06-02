@@ -6,7 +6,7 @@
  * Time: 17:00
  */
 
-namespace Domain;
+namespace writerBlog\Domain;
 
 
 class Category

@@ -1,0 +1,20 @@
+<!-- Header of a post -->
+<div class="post-preview-part1">
+    {% set category_id = post.getIdCategory %}
+    {% set category = categories[ category_id] %}
+    <span class="category-info">{{ category.getSName }}</span>
+    <a href="{{ path('post', {'id': post.getIId}) }}">
+        <h2 class="post-title">{{ post.getSTitle }}</h2>
+    </a>
+    <ul class="post-meta">
+        <li>
+            {{ post.getCreationDate }}
+        </li>
+        <li>
+            <a href="#">{{ author.getWebName }}</a>
+        </li>
+        <li>
+            <a href="#">Laisser un message</a>
+        </li>
+    </ul>
+</div>

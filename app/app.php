@@ -24,13 +24,17 @@ $app->register(new Silex\Provider\AssetServiceProvider(), array(
 
 // Register services.
 $app['dao.post'] = function ($app) {
-
     return new writerBlog\DAO\PostDAO($app['db']);
-
 };
 
 $app['dao.blog'] = function ($app) {
-
     return new writerBlog\DAO\BlogDAO($app['db']);
+};
 
+$app['dao.category'] = function($app) {
+    return new writerBlog\DAO\CategoryDAO($app['db']);
+};
+
+$app['dao.admin'] = function ($app) {
+    return new writerBlog\DAO\AdminDAO($app['db']);
 };

@@ -13,7 +13,7 @@ VALUES ('Lorem ipsum', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.
    hendrerit nibh. In ipsum mi, fermentum et eleifend eget, eleifend vitae libero. Phasellus in magna tempor diam
    consequat posuere eu eget urna. Fusce varius nulla dolor, vel semper dui accumsan vitae. Sed eget risus neque.',
         'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut hendrerit mauris ac porttitor accumsan.
-  Nunc vitae pulvinar odio, auctor interdum dolor. Aenean sodales dui ...', 1, '2017/05/12 14:37:00', 'published', 1);
+  Nunc vitae pulvinar odio, auctor interdum dolor. Aenean sodales dui ...', 1, '2017/05/20 14:37:00', 'published', 1);
 
 INSERT  INTO t_post (post_title, post_content, post_extract, post_id_author, post_date_creation, post_status, post_category_id)
 VALUES ('Lorem ipsum en français', 'J’en dis autant de ceux qui, par mollesse d’esprit, c’est-à-dire par la crainte de la
