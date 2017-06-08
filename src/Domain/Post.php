@@ -28,11 +28,12 @@ namespace writerBlog\Domain {
          *
          */
         const EXTRACT_SIZE = 150;
+        const UNDEFINED = -1;
 
         /**
          * Post constructor.
          */
-        public function __construct($id=-1)
+        public function __construct($id=Post::UNDEFINED)
         {
             $this->i_id = $id;
             $this->s_title = null;

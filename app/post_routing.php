@@ -32,9 +32,9 @@ $app->get('/post/{id}', function ($id) use ($app) {
     $author = $app['dao.admin']->get();
 
     return $app['twig']->render('post.html.twig', array('post' => $post,
-                                                         'blog' => $blogInfo,
-                                                    'categories' => $categories,
-                                                         'author' => $author));
+                                                        'blog' => $blogInfo,
+                                                  'categories' => $categories,
+                                                      'author' => $author));
 })->bind('post');
 
 //Create a new post

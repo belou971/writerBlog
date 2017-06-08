@@ -106,12 +106,15 @@ DROP TABLE IF EXISTS t_comment;
 
 CREATE TABLE t_comment (
   com_id            BIGINT(10)                                                  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  com_num_post      BIGINT(10)                                                  NOT NULL,
+  com_post_id      BIGINT(10)                                                  NOT NULL,
+  com_parent_id     BIGINT(10),
   com_pseudo        VARCHAR(10)                                                 NOT NULL,
   com_email         VARCHAR(40)                                                 NOT NULL,
   com_status        ENUM('published', 'not_published', 'malicious', 'disabled') NOT NULL,
   com_date_creation DATETIME                                                    NOT NULL,
-  FOREIGN KEY (com_num_post) REFERENCES t_post (post_id)
+  com_message       TEXT                                                        NOT NULL,
+  FOREIGN KEY (com_post_id) REFERENCES t_post (post_id),
+  FOREIGN KEY (com_parent_id) REFERENCES t_comment (com_id)
 )
   ENGINE = innodb
   CHARACTER SET utf8

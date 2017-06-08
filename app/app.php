@@ -38,3 +38,7 @@ $app['dao.category'] = function($app) {
 $app['dao.admin'] = function ($app) {
     return new writerBlog\DAO\AdminDAO($app['db']);
 };
+
+$app['dao.comment'] = function ($app) {
+    return new \writerBlog\DAO\CommentDAO($app['db']);
+};

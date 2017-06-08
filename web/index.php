@@ -11,6 +11,7 @@ $app = new Silex\Application();
 
 require __DIR__.'/../app/config/dev.php';
 require __DIR__ . '/../app/app.php';
-require __DIR__.'/../app/routes.php';
+require __DIR__.'/../app/post_routing.php';
+require __DIR__.'/../app/comment_routing.php';
 
 $app->run();
