@@ -42,3 +42,7 @@ $app['dao.admin'] = function ($app) {
 $app['dao.comment'] = function ($app) {
     return new \writerBlog\DAO\CommentDAO($app['db']);
 };
+
+$app['dao.subscriber'] = function ($app) {
+    return new \writerBlog\DAO\SubscriberDAO($app['db']);
+};
