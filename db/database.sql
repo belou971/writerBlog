@@ -43,9 +43,11 @@ DROP TABLE IF EXISTS t_admin;
 CREATE TABLE t_admin (
   adm_id          BIGINT(10)   NOT NULL PRIMARY KEY AUTO_INCREMENT,
   adm_login       VARCHAR(10)  NOT NULL,
-  adm_email       VARCHAR(40)  NOT NULL,
-  adm_pwd         VARCHAR(100) NOT NULL,
+  adm_email       VARCHAR(80)  NOT NULL,
+  adm_pwd         VARCHAR(80)  NOT NULL,
+  adm_salt        VARCHAR(23)  NOT NULL,
   adm_web_name    VARCHAR(25)  NOT NULL,
+  adm_role        VARCHAR(50)  NOT NULL,
   nb_notification TINYINT                           DEFAULT 0
 )
   ENGINE = innodb

@@ -1,7 +1,7 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: belou
+ * User: Eve ODIN
  * Date: 01/06/17
  * Time: 17:23
  */
@@ -9,11 +9,16 @@
 namespace writerBlog\Domain;
 
 
-class Admin
+use Symfony\Component\Security\Core\User\UserInterface;
+
+class Admin implements UserInterface
 {
     private $id;
     private $login;
     private $web_name;
+    private $password;
+    private $salt;
+    private $role;
 
     public function __construct($id)
     {
@@ -25,7 +30,7 @@ class Admin
     /**
      * @return mixed
      */
-    public function getLogin()
+    public function getUsername()
     {
         return $this->login;
     }
@@ -33,7 +38,7 @@ class Admin
     /**
      * @param mixed $login
      */
-    public function setLogin($login)
+    public function setUsername($login)
     {
         $this->login = $login;
     }
@@ -62,6 +67,61 @@ class Admin
         $this->web_name = $web_name;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getPassword()
+    {
+        return $this->password;
+    }
 
+    /**
+     * @param mixed $password
+     */
+    public function setPassword($password)
+    {
+        $this->password = $password;
+    }
 
+    /**
+     * @return mixed
+     */
+    public function getSalt()
+    {
+        return $this->salt;
+    }
+
+    /**
+     * @param mixed $salt
+     */
+    public function setSalt($salt)
+    {
+        $this->salt = $salt;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getRole()
+    {
+        return $this->role;
+    }
+
+    /**
+     * @param mixed $role
+     */
+    public function setRole($role)
+    {
+        $this->role = $role;
+    }
+
+    public function getRoles()
+    {
+        return array($this->getRole());
+    }
+
+    public function eraseCredentials()
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
 }
