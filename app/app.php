@@ -22,6 +22,23 @@ $app->register(new Silex\Provider\AssetServiceProvider(), array(
     'assets.version' => 'v1'
 ));
 
+$app->register(new Silex\Provider\SessionServiceProvider());
+$app->register(new Silex\Provider\SecurityServiceProvider(), array(
+    'security.firewalls' => array(
+        'secured' => array(
+            'pattern' => '^/',
+            'anonymous' => true,
+            'logout' => true,
+            'form' => array('login_path' => '/login', 'check_path' => '/login_check'),
+            'users' => function () use ($app) {
+                return new writerBlog\DAO\AdminDAO($app['db']);
+            },
+        ),
+    ),
+));
+
+
+
 // Register services.
 $app['dao.post'] = function ($app) {
     return new writerBlog\DAO\PostDAO($app['db']);

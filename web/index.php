@@ -14,5 +14,6 @@ require __DIR__ . '/../app/app.php';
 require __DIR__.'/../app/post_routing.php';
 require __DIR__.'/../app/comment_routing.php';
 require __DIR__.'/../app/subscriber_routing.php';
+require __DIR__.'/../app/admin_routing.php';
 
 $app->run();
