@@ -10,31 +10,15 @@
 namespace writerBlog\DAO;
 
 
+    use DAO\DAO;
     use Doctrine\DBAL\Connection;
     use Symfony\Component\HttpFoundation\Request;
     use writerBlog\Domain\EPostStatus;
     use writerBlog\Domain\Post;
     use writerBlog\Domain\Admin;
 
-    class PostDAO
+    class PostDAO extends DAO
     {
-        /**
-         * Database connection
-         *
-         * @var \Doctrine\DBAL\Connection
-         */
-        private $db;
-
-        /**
-         * Constructor
-         *
-         * @param \Doctrine\DBAL\Connection The database connection object
-         */
-        public function __construct(Connection $db)
-        {
-            $this->db = $db;
-        }
-
         /**
          * Return a list of all posts, sorted by publication date (most recent first).
          *
@@ -42,7 +26,7 @@ namespace writerBlog\DAO;
          */
         public function findAll()
         {
-            $queryBuilder = $this->db->createQueryBuilder();
+            $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->select('p.post_id', 'p.post_title', 'p.post_content',
                 'p.post_extract', 'p.post_nb_visit', 'p.post_date_modification',
                 'p.post_image', 'p.post_date_creation', 'p.post_id_author', 'p.post_category_id')
@@ -62,7 +46,7 @@ namespace writerBlog\DAO;
             $posts = array();
             foreach ($results as $row) {
                 $post_Id = $row['post_id'];
-                $posts[$post_Id] = $this->buildPost($row);
+                $posts[$post_Id] = $this->buildDomainObject($row);
             }
             return $posts;
 
@@ -75,7 +59,7 @@ namespace writerBlog\DAO;
          */
         public function find($idx_to_start ,$number_row_max)
         {
-            $queryBuilder = $this->db->createQueryBuilder();
+            $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->select('p.post_id', 'p.post_title', 'p.post_content',
                 'p.post_extract', 'p.post_nb_visit', 'p.post_date_modification',
                 'p.post_image', 'p.post_date_creation', 'p.post_id_author', 'p.post_category_id')
@@ -97,7 +81,7 @@ namespace writerBlog\DAO;
             $posts = array();
             foreach ($results as $row) {
                 $post_Id = $row['post_id'];
-                $posts[$post_Id] = $this->buildPost($row);
+                $posts[$post_Id] = $this->buildDomainObject($row);
             }
             return $posts;
         }
@@ -108,7 +92,7 @@ namespace writerBlog\DAO;
          */
         public function getPost($id)
         {
-            $queryBuilder = $this->db->createQueryBuilder();
+            $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->select('p.post_id', 'p.post_title', 'p.post_content',
                 'p.post_extract', 'p.post_nb_visit', 'p.post_date_modification',
                 'p.post_image', 'p.post_date_creation', 'p.post_id_author', 'p.post_category_id')
@@ -123,7 +107,7 @@ namespace writerBlog\DAO;
 
             $result = $statement->fetch();
 
-            return $this->buildPost($result);
+            return $this->buildDomainObject($result);
         }
 
         /**
@@ -180,7 +164,7 @@ namespace writerBlog\DAO;
 
         private function updatePostStatus($id, $new_status)
         {
-            $queryBuilder = $this->db->createQueryBuilder();
+            $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->update('t_post', 'p')
                 ->set('p.post_status', '?')
                 ->where('post_id = ?')
@@ -203,7 +187,7 @@ namespace writerBlog\DAO;
                               'post_extract' => '?',
                               'post_id_author' => '?');
 
-            $queryBuilder = $this->db->createQueryBuilder();
+            $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->insert('t_post')
                          ->values($postData)
                          ->setParameter(0,$post->getSTitle())
@@ -219,7 +203,7 @@ namespace writerBlog\DAO;
 
         private function update(Post $post)
         {
-            $queryBuilder = $this->db->createQueryBuilder();
+            $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->update('t_post', 'p')
                 ->set('p.post_title','?')
                 ->set('p.post_content', '?')
@@ -243,7 +227,7 @@ namespace writerBlog\DAO;
          * @param array $row The DB row containing Post data.
          * @return Post
          */
-        private function buildPost(array $row)
+        protected function buildDomainObject($row)
         {
             $Post = new Post($row['post_id']);
 

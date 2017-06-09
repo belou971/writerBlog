@@ -8,21 +8,16 @@
 
 namespace writerBlog\DAO;
 
+use DAO\DAO;
 use Doctrine\DBAL\Connection;
 use writerBlog\Domain\Admin;
 use writerBlog\Domain\Blog;
 
-class AdminDAO
+class AdminDAO extends DAO
 {
-    private $db;
-
-    public function __construct(Connection $db)
+    public function get()
     {
-        $this->db = $db;
-    }
-
-    public function get() {
-        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder = $this->getDB()->createQueryBuilder();
 
         $queryBuilder->select('adm_id', 'adm_login', 'adm_web_name')
                      ->from('t_admin');
@@ -33,17 +28,15 @@ class AdminDAO
         }
 
         $result = $statement->fetch();
-        return $this->build($result);
-
-
+        return $this->buildDomainObject($result);
     }
 
-    private function build($row)
+    protected function buildDomainObject($row)
     {
         if(is_null($row)|| !isset($row)) { return NULL; }
 
         $admin = new Admin($row['adm_id']);
-        $admin->setLogin($row['adm_login']);
+        $admin->setUsername($row['adm_login']);
         $admin->setWebName($row['adm_web_name']);
 
         return $admin;

@@ -10,30 +10,15 @@
 namespace writerBlog\DAO;
 
 
+    use DAO\DAO;
     use Doctrine\DBAL\Connection;
     use Symfony\Component\HttpFoundation\Request;
     use writerBlog\Domain\ECommentStatus;
     use writerBlog\Domain\Comment;
     use writerBlog\Domain\EPostStatus;
 
-    class CommentDAO
+    class CommentDAO extends DAO
     {
-        /**
-         * Database connection
-         *
-         * @var \Doctrine\DBAL\Connection
-         */
-        private $db;
-
-        /**
-         * Constructor
-         *
-         * @param \Doctrine\DBAL\Connection The database connection object
-         */
-        public function __construct(Connection $db)
-        {
-            $this->db = $db;
-        }
 
         /**
          * @param int $id Takes the comment Id in parameter
@@ -41,7 +26,7 @@ namespace writerBlog\DAO;
          */
         public function getComment($id)
         {
-            $queryBuilder = $this->db->createQueryBuilder();
+            $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->select('*')
                 ->from('t_comment')
                 ->where('com_id = ?')
@@ -54,7 +39,7 @@ namespace writerBlog\DAO;
 
             $result = $statement->fetch();
 
-            return $this->buildComment($result);
+            return $this->buildDomainObject($result);
         }
 
         /**
@@ -66,7 +51,7 @@ namespace writerBlog\DAO;
          */
         public function getCommentsByPostId($post_id)
         {
-            $queryBuilder = $this->db->createQueryBuilder();
+            $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->select('*')
                 ->from('t_comment')
                 ->where('com_post_id = ?')
@@ -193,7 +178,7 @@ namespace writerBlog\DAO;
 
         private function updateCommentStatus($id, $new_status)
         {
-            $queryBuilder = $this->db->createQueryBuilder();
+            $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->update('t_comment')
                 ->set('com_status', '?')
                 ->where('com_id = ?')
@@ -217,7 +202,7 @@ namespace writerBlog\DAO;
                               'com_date_creation' => '?',
                               'com_parent_id' => '?');
 
-            $queryBuilder = $this->db->createQueryBuilder();
+            $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->insert('t_comment')
                          ->values($commentData)
                          ->setParameter(0,$comment->getPostId())
@@ -238,7 +223,7 @@ namespace writerBlog\DAO;
          * @param array $row The DB row containing Comment data.
          * @return Comment
          */
-        private function buildComment(array $row)
+        protected function buildDomainObject($row)
         {
             $comment = new Comment($row['com_post_id'], $row['com_id']);
 

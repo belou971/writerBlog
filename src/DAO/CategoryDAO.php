@@ -8,31 +8,16 @@
 
 namespace writerBlog\DAO;
 
+use DAO\DAO;
 use Doctrine\DBAL\Connection;
 use writerBlog\Domain\Category;
 
 
-class CategoryDAO
+class CategoryDAO extends DAO
 {
-    /**
-     * Database connection
-     *
-     * @var \Doctrine\DBAL\Connection
-     */
-    private $db;
-
-    /**
-     * Constructor
-     *
-     * @param \Doctrine\DBAL\Connection The database connection object
-     */
-    public function __construct(Connection $db)
-    {
-        $this->db = $db;
-    }
 
     public function findAll() {
-        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder = $this->getDB()->createQueryBuilder();
         $queryBuilder->select('cat_id', 'cat_name')
             ->from('t_categorie', 'c');
 
@@ -47,12 +32,12 @@ class CategoryDAO
         $categories = array();
         foreach ($results as $row) {
             $cat_Id = $row['cat_id'];
-            $categories[$cat_Id] = $this->build($row);
+            $categories[$cat_Id] = $this->buildDomainObject($row);
         }
         return $categories;
     }
 
-    private function build($table_row)
+    protected function buildDomainObject($table_row)
     {
         $category = new Category($table_row['cat_id']);
         $category->setSName($table_row['cat_name']);

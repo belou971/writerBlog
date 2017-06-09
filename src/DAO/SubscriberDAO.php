@@ -8,19 +8,13 @@
 
 namespace writerBlog\DAO;
 
+use DAO\DAO;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\Request;
 use writerBlog\Domain\Subscriber;
 
-class SubscriberDAO
+class SubscriberDAO extends DAO
 {
-    private $db;
-
-    public function __construct(Connection $db)
-    {
-        $this->db = $db;
-    }
-
     public function addSubscriber(Request $requestForm)
     {
         $subscriber = new Subscriber();
@@ -36,7 +30,7 @@ class SubscriberDAO
                                 'sub_email' => '?',
                                 'sub_date_creation' => '?');
 
-        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder = $this->getDB()->createQueryBuilder();
         $queryBuilder->insert('t_subscriber')
             ->values($subscriberData)
             ->setParameter(0,$subscriber->getPseudo())
@@ -44,5 +38,9 @@ class SubscriberDAO
             ->setParameter(2,date("Y-m-d"));
 
         return $queryBuilder->execute();
+    }
+
+    protected function buildDomainObject($row)
+    {
     }
 }

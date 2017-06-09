@@ -8,20 +8,15 @@
 
 namespace writerBlog\DAO;
 
+use DAO\DAO;
 use Doctrine\DBAL\Connection;
 use writerBlog\Domain\Blog;
 
-class BlogDAO
+class BlogDAO extends DAO
 {
-    private $db;
-
-    public function __construct(Connection $db)
-    {
-        $this->db = $db;
-    }
 
     public function find() {
-        $queryBuilder = $this->db->createQueryBuilder();
+        $queryBuilder = $this->getDB()->createQueryBuilder();
 
         $queryBuilder->select('blo_id', 'blo_title')
                      ->from('t_blog');
@@ -32,12 +27,12 @@ class BlogDAO
         }
 
         $result = $statement->fetch();
-        return $this->buildBlogInfo($result);
+        return $this->buildDomainObject($result);
 
 
     }
 
-    private function buildBlogInfo($row)
+    protected function buildDomainObject($row)
     {
         if(is_null($row)|| !isset($row)) { return NULL; }
 
