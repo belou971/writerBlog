@@ -8,12 +8,12 @@
 
 namespace writerBlog\DAO;
 
-use DAO\DAO;
+use writerBlog\DAO\Dao;
 use Doctrine\DBAL\Connection;
 use writerBlog\Domain\Category;
 
 
-class CategoryDAO extends DAO
+class CategoryDAO extends Dao
 {
 
     public function findAll() {

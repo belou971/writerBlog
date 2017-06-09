@@ -10,14 +10,14 @@
 namespace writerBlog\DAO;
 
 
-    use DAO\DAO;
+    use writerBlog\DAO\Dao;
     use Doctrine\DBAL\Connection;
     use Symfony\Component\HttpFoundation\Request;
     use writerBlog\Domain\EPostStatus;
     use writerBlog\Domain\Post;
     use writerBlog\Domain\Admin;
 
-    class PostDAO extends DAO
+    class PostDAO extends Dao
     {
         /**
          * Return a list of all posts, sorted by publication date (most recent first).

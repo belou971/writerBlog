@@ -8,12 +8,12 @@
 
 namespace writerBlog\DAO;
 
-use DAO\DAO;
+use writerBlog\DAO\Dao;
 use Doctrine\DBAL\Connection;
 use writerBlog\Domain\Admin;
 use writerBlog\Domain\Blog;
 
-class AdminDAO extends DAO
+class AdminDAO extends Dao
 {
     public function get()
     {

@@ -8,12 +8,12 @@
 
 namespace writerBlog\DAO;
 
-use DAO\DAO;
+use writerBlog\DAO\Dao;
 use Doctrine\DBAL\Connection;
 use Symfony\Component\HttpFoundation\Request;
 use writerBlog\Domain\Subscriber;
 
-class SubscriberDAO extends DAO
+class SubscriberDAO extends Dao
 {
     public function addSubscriber(Request $requestForm)
     {

@@ -10,14 +10,14 @@
 namespace writerBlog\DAO;
 
 
-    use DAO\DAO;
+    use writerBlog\DAO\Dao;
     use Doctrine\DBAL\Connection;
     use Symfony\Component\HttpFoundation\Request;
     use writerBlog\Domain\ECommentStatus;
     use writerBlog\Domain\Comment;
     use writerBlog\Domain\EPostStatus;
 
-    class CommentDAO extends DAO
+    class CommentDAO extends Dao
     {
 
         /**

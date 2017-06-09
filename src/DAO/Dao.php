@@ -6,11 +6,11 @@
  * Time: 11:53
  */
 
-namespace DAO;
+namespace writerBlog\DAO;
 
 use Doctrine\DBAL\Connection;
 
-abstract class DAO
+abstract class Dao
 {
     private $db;
 

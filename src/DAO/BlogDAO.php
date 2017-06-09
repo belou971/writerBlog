@@ -8,11 +8,11 @@
 
 namespace writerBlog\DAO;
 
-use DAO\DAO;
+use writerBlog\DAO\Dao;
 use Doctrine\DBAL\Connection;
 use writerBlog\Domain\Blog;
 
-class BlogDAO extends DAO
+class BlogDAO extends Dao
 {
 
     public function find() {
