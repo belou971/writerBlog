@@ -15,7 +15,9 @@ $app->get('/comment/{id}', function ($id) use($app) {
 
  $commentsTree = $app['dao.comment']->getCommentsByPostId($id);
 
-    return $commentsTree;
+    var_dump($commentsTree);
+    //return $commentsTree;
+    return "ok";
 });
 
 //Add a new comment on a post

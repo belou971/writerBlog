@@ -9,7 +9,6 @@
 
 namespace writerBlog\DAO;
 
-
     use writerBlog\DAO\Dao;
     use Doctrine\DBAL\Connection;
     use Symfony\Component\HttpFoundation\Request;
@@ -82,7 +81,7 @@ namespace writerBlog\DAO;
             $comments = array();
             foreach ($table as $row) {
                 $com_id = $row['com_id'];
-                $comments[$com_id] = $this->buildComment($row);
+                $comments[$com_id] = $this->buildDomainObject($row);
             }
             return $comments;
         }
@@ -104,7 +103,6 @@ namespace writerBlog\DAO;
                 if($comment->getParentId() === Comment::UNDEFINED) {
                     $level = 0;
                     $tree[] = array("comment"=>$comment, "level"=>$level);
-                    echo "At level[$level]: comment Id[".$comment->getId()."]\n";
                     $this->buildChildren_recursive($comment, $comments, $tree, ++$level);
                 }
             }
