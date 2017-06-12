@@ -15,6 +15,7 @@ class Admin implements UserInterface
 {
     private $id;
     private $login;
+    private $email;
     private $web_name;
     private $password;
     private $salt;
@@ -24,7 +25,26 @@ class Admin implements UserInterface
     {
         $this->id =$id;
         $this->login = null;
+        $this->email = null;
         $this->web_name = null;
+        $this->salt = mcrypt_create_iv(random_int(1, 10), MCRYPT_DEV_URANDOM);
+        $this->role = ERoleType::ROLE_USER;
+    }
+
+    /**
+     * @return null
+     */
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * @param null $email
+     */
+    public function setEmail($email)
+    {
+        $this->email = $email;
     }
 
     /**
@@ -40,6 +60,7 @@ class Admin implements UserInterface
      */
     public function setUsername($login)
     {
+        var_dump($login);
         $this->login = $login;
     }
 
@@ -64,6 +85,7 @@ class Admin implements UserInterface
      */
     public function setWebName($web_name)
     {
+       var_dump($web_name);
         $this->web_name = $web_name;
     }
 

@@ -8,14 +8,18 @@
 
 namespace writerBlog\DAO;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Encoder\BCryptPasswordEncoder;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UsernameNotFoundException;
+use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use writerBlog\DAO\Dao;
 use Doctrine\DBAL\Connection;
 use writerBlog\Domain\Admin;
 use writerBlog\Domain\Blog;
+use writerBlog\Domain\ERoleType;
 
 class AdminDAO extends Dao implements UserProviderInterface
 {
@@ -112,5 +116,58 @@ class AdminDAO extends Dao implements UserProviderInterface
     public function supportsClass($class)
     {
         return ($class === 'writerBlog\Domain\Admin');
+    }
+
+    public function existAdmin()
+    {
+        $queryBuilder = $this->getDB()->createQueryBuilder();
+
+        $queryBuilder->select('*')
+                     ->from('t_admin');
+
+        $statement = $queryBuilder->execute();
+        var_dump($statement->rowCount());
+        echo "nbl = ".$statement->rowCount();
+        return ($statement->rowCount() === 1);
+    }
+
+    public function updateAdmin(Request $request, BCryptPasswordEncoder $encoder)
+    {
+        $user = new Admin(-1);
+
+        $this->fillData($user, $request, $encoder);
+
+        return $this->update($user);
+    }
+
+    private function fillData(Admin $user, Request $request, BCryptPasswordEncoder $encoder) {
+        $user->setUsername($request->get('username'));
+        $user->setWebName($request->get('publicname'));
+        $user->setEmail($request->get('email'));
+
+        $password_encoder = $encoder->encodePassword($request->get('password'), $user->getSalt());
+        $user->setPassword($password_encoder);
+    }
+
+    private function update(Admin $user)
+    {
+        $queryBuilder = $this->getDB()->createQueryBuilder();
+        $queryBuilder->update('t_admin', 'a')
+            ->set('a.adm_login','?')
+            ->set('a.adm_email', '?')
+            ->set('a.adm_pwd', '?')
+            ->set('a.adm_web_name' , '?')
+            ->set('a.adm_salt' , '?')
+            ->set('a.adm_role', '?')
+            ->where('a.adm_id = ?')
+            ->setParameter(0,$user->getUsername())
+            ->setParameter(1,$user->getEmail())
+            ->setParameter(2,$user->getPassword())
+            ->setParameter(3,$user->getWebName())
+            ->setParameter(4,$user->getSalt())
+            ->setParameter(5,ERoleType::ROLE_ADMIN)
+            ->setParameter(6,1);
+
+        return $queryBuilder->execute();
     }
 }

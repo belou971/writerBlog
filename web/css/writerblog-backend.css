@@ -1,0 +1,91 @@
+.login-form {
+    padding-top: 0;
+    padding-left: 15px;
+    padding-right: 15px;
+    padding-bottom: 15px;
+    border: 1px solid #f9bf22;
+    box-shadow: 1px 1px 2px 2px #f9bf22;
+    background-color: #ffffff;
+}
+
+.login-form-header {
+    background-color: #085394;
+    color: #ffffff;
+    margin-bottom: 25px;
+}
+
+.gold {
+    color: #f9bf22;
+}
+
+
+.page {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    position: absolute;
+    top:0;
+    bottom:0;
+    right:0;
+    left: 0;
+    background-color: #7f9ad1;
+}
+
+.center-me {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+.no-margin-top {
+    margin-top:0;
+    padding-top: 1em;
+}
+
+.my-link-style {
+    color: #ffffff;
+}
+
+.my-link-style:hover {
+    text-decoration: none;
+    color: #f9bf22;
+}
+
+@media only screen and (min-width: 360px) {
+
+    .login-form-width {
+        width:100%;
+    }
+
+}
+
+@media only screen and (min-width: 640px) {
+
+    .login-form-width {
+        width:65%;
+    }
+
+}
+
+
+@media only screen and (min-width: 730px) {
+
+    .login-form-width {
+        width:65%;
+    }
+
+}
+
+@media only screen and (min-width: 1100px) {
+
+    .login-form-width {
+        width:55%;
+    }
+
+}
+
+

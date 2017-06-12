@@ -26,11 +26,12 @@ $app->register(new Silex\Provider\SessionServiceProvider());
 $app->register(new Silex\Provider\SecurityServiceProvider(), array(
     'security.firewalls' => array(
         'secured' => array(
-            'pattern' => '^/',
-            'anonymous' => true,
-            'logout' => true,
-            'form' => array('login_path' => '/login', 'check_path' => '/login_check'),
-            'users' => function () use ($app) {
+            'pattern' => '^/admin',
+            /*'anonymous' => true,*/
+            /*'logout' => true,*/
+            'form'   => array('login_path'  => '/connexion'    , 'check_path'         => '/admin/login_check'),
+            'logout' => array('logout_path' => '/admin/logout' , 'invalidate_session' => true),
+            'users'  => function () use ($app) {
                 return new writerBlog\DAO\AdminDAO($app['db']);
             },
         ),
