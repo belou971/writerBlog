@@ -80,6 +80,9 @@ class AdminDAO extends Dao implements UserProviderInterface
         if(is_int($statement)) {
             throw new UsernameNotFoundException(sprintf('Admin as user name %s not found', $username));
         }
+
+        $result = $statement->fetch();
+        return $this->buildDomainObject($result);
     }
 
     /**
@@ -145,8 +148,8 @@ class AdminDAO extends Dao implements UserProviderInterface
         $user->setWebName($request->get('publicname'));
         $user->setEmail($request->get('email'));
 
-        $password_encoder = $encoder->encodePassword($request->get('password'), $user->getSalt());
-        $user->setPassword($password_encoder);
+        $password_encoded = $encoder->encodePassword($request->get('password'), $user->getSalt());
+        $user->setPassword($password_encoded);
     }
 
     private function update(Admin $user)

@@ -26,6 +26,13 @@ $app->post('/signup-check', function(Request $request) use ($app) {
     return $response;
 })->bind('signup-check');
 
+$app->get('/signup', function(Request $request) use ($app) {
+
+    $blogInfo = $app['dao.blog']->find();
+    return $app['twig']->render('sign-up.html.twig', array('blog' => $blogInfo)
+    );
+})->bind('signup');
+
 // connexion form
 $app->get('/connexion', function(Request $request) use ($app) {
 

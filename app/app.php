@@ -27,8 +27,6 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
     'security.firewalls' => array(
         'secured' => array(
             'pattern' => '^/admin',
-            /*'anonymous' => true,*/
-            /*'logout' => true,*/
             'form'   => array('login_path'  => '/connexion'    , 'check_path'         => '/admin/login_check'),
             'logout' => array('logout_path' => '/admin/logout' , 'invalidate_session' => true),
             'users'  => function () use ($app) {
