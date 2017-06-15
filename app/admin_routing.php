@@ -37,14 +37,17 @@ $app->get('/signup', function(Request $request) use ($app) {
 $app->get('/connexion', function(Request $request) use ($app) {
 
     $blogInfo = $app['dao.blog']->find();
-    /*return  $app['twig']->render('sign-up.html.twig', array('blog'  => $blogInfo)
-    );*/
 
-    //else {
-        return $app['twig']->render('connexion.html.twig', array('blog'  => $blogInfo,
-                                                                 'error' => $app['security.last_error']($request),
-                                                                 'last_username' => $app['session']->get('_security.last_username'),
-        ));
-    //    return null;
-    //}
+    return $app['twig']->render('connexion.html.twig', array('blog'  => $blogInfo,
+                                                             'error' => $app['security.last_error']($request),
+                                                             'last_username' => $app['session']->get('_security.last_username'),
+    ));
+
 })->bind('connexion');
+
+$app->get('/admin/', function() use ($app) {
+    $blogInfo = $app['dao.blog']->find();
+
+    return $app['twig']->render('post-admin.html.twig', array('blog'  => $blogInfo));
+
+})->bind('admin_home');
