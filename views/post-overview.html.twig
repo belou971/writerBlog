@@ -1,114 +1,35 @@
 {% extends 'base-backend.html.twig' %}
 
-{% block title %}Dashboard{% endblock %}
+{% block title %}Gestion des Posts{% endblock %}
 
 {% block css %}
     <!-- Bootstrap Core CSS -->
     <link href="{{ asset('/lib/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Bootstrap validator CSS -->
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/css/bootstrapValidator.css' rel='stylesheet' type='text/css'>
     <!-- Theme CSS -->
     <link href="{{ asset('/css/writerblog-backend.css') }}" rel="stylesheet">
-    <link href="{{ asset('css/writerblog-admin-backend.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/writerblog-admin-backend.css') }}" rel="stylesheet">
 {% endblock %}
 
-{% block pageHeader %}Dashboard{% endblock %}
+{% block jsTop %}
+    <!-- Bootstrap validator JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.js"></script>
+{% endblock %}
+
+{% block js %}
+    <!-- Personal JavaScript -->
+    <script src="{{ asset('/js/browse.js') }}"></script>
+{% endblock %}
+
+{% block pageHeader %}Gestion des Posts{% endblock %}
 
 {% block pageContent %}
-    <div class="row row-spacing">
-        <div class="col-lg-4 col-md-4">
-            <div class="panel panel-green">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-comments fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">6</div>
-                            <div>Nouveaux Commentaires!</div>
-                        </div>
-                    </div>
-                </div>
-                <a href="#">
-                    <div class="panel-footer footer-font-size">
-                        <span class="pull-left">Voir</span>
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-4">
-            <div class="panel panel-red">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-exclamation-triangle fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">2</div>
-                            <div>Nouveaux Signalements!</div>
-                        </div>
-                    </div>
-                </div>
-                <a href="#">
-                    <div class="panel-footer footer-font-size">
-                        <span class="pull-left">Voir</span>
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
-        <div class="col-lg-4 col-md-4">
-            <div class="panel panel-black">
-                <div class="panel-heading">
-                    <div class="row">
-                        <div class="col-xs-3">
-                            <i class="fa fa-file fa-5x"></i>
-                        </div>
-                        <div class="col-xs-9 text-right">
-                            <div class="huge">24</div>
-                            <div>Posts publiés!</div>
-                        </div>
-                    </div>
-                </div>
-                <a href="#">
-                    <div class="panel-footer footer-font-size">
-                        <span class="pull-left">Voir</span>
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </div>
-    <!-- /.row -->
-
-    <div class="row row-spacing">
-        <div class="col-lg-push-1 col-lg-10">
-            <div class="panel panel-button">
-                <div class="panel-heading">
-                    <a href="{{ path('new_post_form') }}">
-                        <div class="row">
-                            <div class="col-xs-4">
-                                <i class="fa fa-plus-square fa-5x"></i>
-                            </div>
-                            <div class="col-xs-8 text-right">
-                                <div class="huge">Ajouter un post</div>
-                                <div>Nouvelle création!</div>
-                            </div>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- /.row -->
-
     <div class="row">
         <div class="col-lg-offset-1 col-lg-10 col-lg-offset-1 col-md-12">
             <div class="panel panel-primary">
                 <div class="panel-heading">
-                    <h2>Tableau des derniers posts</h2>
+                    <h2>Tableau des posts</h2>
                 </div>
                 <div class="panel-body">
                     <div class="table-responsive">
@@ -164,12 +85,10 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="text-right">
-                        <a href="#">Voir tous les posts <i class="fa fa-arrow-circle-right"></i></a>
-                    </div>
                 </div>
             </div>
         </div>
+        <!-- /.row -->
+
     </div>
-    <!-- /.row -->
 {% endblock %}

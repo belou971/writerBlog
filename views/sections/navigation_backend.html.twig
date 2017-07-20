@@ -1,31 +1,61 @@
 <!-- Navigation -->
-<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-    <div class="container-fluid">
-        <!-- Brand and toggle get grouped for better mobile display -->
-        <div class="navbar-header page-scroll">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                <span class="sr-only">Toggle navigation</span>
-                Menu <i class="fa fa-bars"></i>
-            </button>
-            <a class="navbar-brand" href="{{ path('admin_home') }}">majolieplume.blog<span class="admin_backend">Admin</span></a>
-        </div>
-
-        <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-            <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown">
-                    <a class="dropdown-toggle" role="button" data-toggle="dropdown" href="#" aria-expanded="false">
-                        <i class="glyphicon glyphicon-user"></i> {{ app.user.username }} <span class="caret"></span>
-                    </a>
-                    <ul id="g-account-menu" class="dropdown-menu" role="menu">
-                        <li>
-                            <a href="{{ path('admin_logout') }}"><i class="glyphicon glyphicon-lock"></i> Logout</a>
-                        </li>
-                    </ul>
+<nav class="navbar navbar-default navbar-fixed-top my-admin-font" role="navigation">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{ path('admin_home') }}">majolieplume.blog<span class="admin_backend">Admin</span></a>
+    </div>
+    <!-- Top Menu Items -->
+    <ul class="nav navbar-right top-nav">
+        <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i> {{ app.user.username }} <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
+                </li>
+                <li class="divider"></li>
+                <li>
+                    <a href="{{ path('admin_logout') }}"><i class="fa fa-fw fa-power-off"></i> Se déconnecter</a>
                 </li>
             </ul>
-        </div>
-        <!-- /.navbar-collapse -->
+        </li>
+    </ul>
+    <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
+    {% set currentPath = global.request.attributes.get('_route') %}
+    {% set active = 'class=active' %}
+    <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav sidebar">
+            <li {{ currentPath == "admin_home"? active}}>
+                <a href="{{ path('admin_home') }}"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
+            </li>
+            <li>
+                {% set expand = 'aria-expanded=true' %}
+                {% set not_expand  = 'aria-expanded=false'  %}
+                {% set is_expanded = (currentPath == "new_post_form" or currentPath == "edit_post_form") %}
+                <a href="javascript:;" data-toggle="collapse" {{ is_expanded?expand:not_expand }} data-target="#demo">
+                    <i class="fa fa-fw fa-file-o"></i> Posts <i class="fa fa-fw fa-caret-down"></i>
+                </a>
+                <ul id="demo" class="collapse {{ is_expanded ?'in' }}" {{ is_expanded?expand:not_expand }}>
+                    <li {{ currentPath == "new_post_form"? active}}>
+                        <a href="{{ path('new_post_form') }}">Créer un post</a>
+                    </li>
+                    <li {{ currentPath == "edit_post_form"? active}}>
+                        <a href="{{ path('edit_post_form') }}">Editer un post</a>
+                    </li>
+                </ul>
+            </li>
+            <li {{ currentPath == "#"? active}}>
+                <a href="#"><i class="fa fa-fw fa-envelope-o"></i> Messages</a>
+            </li>
+            <li {{ currentPath == "#"? active}}>
+                <a href="#"><i class="fa fa-fw fa-picture-o"></i> Images</a>
+            </li>
+        </ul>
     </div>
-    <!-- /.container -->
+    <!-- /.navbar-collapse -->
 </nav>

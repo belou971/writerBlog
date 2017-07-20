@@ -1,0 +1,115 @@
+{% extends 'base-backend.html.twig' %}
+
+{% block title %}Post: mode édition{% endblock %}
+
+{% block css %}
+    <!-- Bootstrap Core CSS -->
+    <link href="{{ asset('/lib/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
+    <!-- Bootstrap validator CSS -->
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/css/bootstrapValidator.css' rel='stylesheet' type='text/css'>
+    <!-- Theme CSS -->
+    <link href="{{ asset('/css/writerblog-backend.css') }}" rel="stylesheet">
+    <link href="{{ asset('/css/writerblog-admin-backend.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block jsTop %}
+    <!-- Bootstrap validator JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.bootstrapvalidator/0.5.3/js/bootstrapValidator.js"></script>
+    <!-- TinyMCE Javascript -->
+    <script src='https://cloud.tinymce.com/stable/tinymce.min.js'></script>
+    <script src="{{ asset('/js/initTinyMCE.js') }}"></script>
+{% endblock %}
+
+{% block js %}
+    <!-- Personal JavaScript -->
+    <script src="{{ asset('/js/browse.js') }}"></script>
+{% endblock %}
+
+{% block pageHeader %}Post: mode édition{% endblock %}
+
+{% block pageContent %}
+    <div class="row">
+        <div class=" col-lg-12 col-md-12">
+
+            <form class="form-group-lg post-form" name="editForm" id="editForm" method="post">
+                <div class="form-group row">
+                    <div class="col-lg-12">
+                        <input id="titlePost" name="titlePost" class="form-control" type="text" placeholder="Entrer le titre du Post" required>
+                    </div>
+                </div>
+
+                <div class="form-row-group row">
+                    <input type="file" name="img[]" class="file">
+                    <div class="input-group input-lg">
+                        <span class="input-group-addon"><i class="glyphicon glyphicon-picture"></i></span>
+                        <input id="imagePost" name="imagePost" type="text" class="form-control input-lg" disabled placeholder="Télécharger une image">
+                                <span class="input-group-btn">
+                                    <button class="browse btn btn-primary input-lg border-radius-btn" type="button">
+                                        <i class="glyphicon glyphicon-search"></i> Parcourir
+                                    </button>
+                                </span>
+                    </div>
+                </div>
+
+                <div class="form-row-group row">
+                    <div class=" col-lg-5">
+                        <select class="form-control" id="categories" name="categories">
+                            <option selected>Default</option>
+                            <option>2</option>
+                            <option>3</option>
+                        </select>
+                    </div>
+                    <div class="col-lg-6">
+                        <h4><a class="category" href="javascript:">Ajouter une catégorie</a></h4>
+                    </div>
+                </div>
+
+                <div id="divNewCat" class="form-row-group border-row row" style="display:none;">
+                    <h4><label for="inputCategory" class="text-primary">Nouvelle catégorie</label></h4>
+                    <div class="col-lg-10 col-md-9">
+                        <input id="inputCategory" name="inputCategory" class="form-control" type="text" placeholder="Entrer un libellé">
+                    </div>
+                    <div class="col-lg-2 col-md-3">
+                        <button id="addCategoryBtn" name="addCategoryBtn" class="btn input-lg btn-block btn-primary border-radius-btn category-btn" type="submit">Ajouter</button>
+                    </div>
+                </div>
+
+                <div class="form-row-group row">
+                    <div class="col-md-2">
+                        <h4><label class="text-primary">Status</label></h4>
+                    </div>
+                    <div class="col-md-5 btn-group btn-toggle">
+                        <button class="btn btn-default"><i class="fa fa-lg fa-eye"></i> Publier</button>
+                        <button class="btn btn-success active"><i class="fa fa-lg fa-eye-slash"></i> Ne pas publier</button>
+                    </div>
+                    <div class="col-md-5">
+                        <button id="deleteBtn" name="deleteBtn" class="btn btn-primary border-radius-btn" type="button">
+                            <i class="fa fa-lg fa-trash"></i> Supprimer
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-row-group row">
+                    <div class="col-lg-12">
+                                <textarea id="contentPost">
+
+                                </textarea>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-4 col-sm-4 col-xs-4 ">
+                        <button id="saveBtn" type="submit" class="btn btn-block btn-primary border-radius-btn">Sauvegarder</button>
+                    </div>
+                    <div class="col-lg-4 col-sm-4 col-xs-4 ">
+                        <button id="savePublishBtn" type="submit" class="btn btn-block btn-default border-radius-btn">Sauvegarder et Publier</button>
+                    </div>
+                    <div class="col-lg-4 col-sm-4 col-xs-4 ">
+                        <button id="cancelBtn" type="reset" class="btn btn-default border-radius-btn">Annuler</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- /.row -->
+{% endblock %}

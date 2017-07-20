@@ -33,7 +33,7 @@ $app->get('/signup', function(Request $request) use ($app) {
     );
 })->bind('signup');
 
-// connexion form
+// Connexion form page
 $app->get('/connexion', function(Request $request) use ($app) {
 
     $blogInfo = $app['dao.blog']->find();
@@ -45,9 +45,28 @@ $app->get('/connexion', function(Request $request) use ($app) {
 
 })->bind('connexion');
 
+
+// Administration home page
 $app->get('/admin/', function() use ($app) {
     $blogInfo = $app['dao.blog']->find();
 
     return $app['twig']->render('post-admin.html.twig', array('blog'  => $blogInfo));
 
 })->bind('admin_home');
+
+
+// Adminstration: New post form page
+$app->get('/admin/new-post', function() use ($app) {
+    $blogInfo = $app['dao.blog']->find();
+
+    return $app['twig']->render('form-new-post.html.twig', array('blog'  => $blogInfo));
+
+})->bind('new_post_form');
+
+// Administration: Post Edition Form page
+$app->get('/admin/edit-post', function() use ($app) {
+    $blogInfo = $app['dao.blog']->find();
+
+    return $app['twig']->render('post-overview.html.twig', array('blog'  => $blogInfo));
+
+})->bind('edit_post_form');
