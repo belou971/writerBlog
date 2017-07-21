@@ -119,16 +119,33 @@ $(document).ready(function() {
 
 //Change color state of status buttons on a click event associated to these buttons
 $('.btn-toggle').click(function() {
-    $(this).find('.btn').toggleClass('active');
 
-    if ($(this).find('.btn-success').size()>0) {
+    /*$(this).find('.btn').toggleClass('active');
+
+    if ($(this).find('.btn-success').length>0) {
         $(this).find('.btn').toggleClass('btn-success');
     }
 
-    $(this).find('.btn').toggleClass('btn-default');
+    $(this).find('.btn').toggleClass('btn-default');*/
+    set_active_class($(this));
 });
+
+/*$('.btn-toggle').load(function() {
+    set_active_class($(this));
+});*/
 
 $('form').submit(function(){
     alert($(this["options"]).val());
     return false;
 });
+
+function set_active_class($element) {
+    $element.find('.btn').toggleClass('active');
+
+    if ($element.find('.btn-success').length>0) {
+        $element.find('.btn').toggleClass('btn-success');
+    }
+
+    $element.find('.btn').toggleClass('btn-default');
+}
+

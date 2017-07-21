@@ -36,6 +36,23 @@ class Comment
         $this->status        = ECommentStatus::PUBLISHED;
         $this->creation_date = null;
         $this->message       = null;
+        $this->read          = ECommentRead::NOT_READ;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRead()
+    {
+        return $this->read;
+    }
+
+    /**
+     * @param string $read
+     */
+    public function setRead($read)
+    {
+        $this->read = $read;
     }
 
     /**

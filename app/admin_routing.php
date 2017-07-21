@@ -48,9 +48,28 @@ $app->get('/connexion', function(Request $request) use ($app) {
 
 // Administration home page
 $app->get('/admin/', function() use ($app) {
-    $blogInfo = $app['dao.blog']->find();
+    $blogInfo        = $app['dao.blog']->find();
+    $nbNewComments   = $app['dao.comment']->getNumberOfNewComments();
+    $token           = $app['security.token_storage']->getToken();
 
-    return $app['twig']->render('post-admin.html.twig', array('blog'  => $blogInfo));
+    if(is_null($token)) {
+        return NULL;
+    }
+
+    $user              = $token->getUser();
+    $nbPublishedPost   = $app['dao.post']->getNumberOfPublishedPost($user->getUsername());
+    $nbUnpublishedPost = $app['dao.post']->getNumberOfUnpublishedPost($user->getUsername());
+    $availablePosts    = $app['dao.post']->getAvailablePostsCreatedBy($user->getUsername());
+    $categories        = $app['dao.category']->findAll();
+    $admin             = $app['dao.admin']->get();
+
+    return $app['twig']->render('post-admin.html.twig', array('blog'  => $blogInfo,
+                                                              'nbNewComments' => $nbNewComments,
+                                                              'nbPublishedPost' => $nbPublishedPost,
+                                                              'nbUnpublishedPost' => $nbUnpublishedPost,
+                                                              'posts' => $availablePosts,
+                                                              'categories' => $categories,
+                                                              'admin' => $admin));
 
 })->bind('admin_home');
 
@@ -63,10 +82,26 @@ $app->get('/admin/new-post', function() use ($app) {
 
 })->bind('new_post_form');
 
+
 // Administration: Post Edition Form page
-$app->get('/admin/edit-post', function() use ($app) {
+$app->get('/admin/edit-post/{id}', function($id) use ($app) {
+    $blogInfo          = $app['dao.blog']->find();
+    $categories        = $app['dao.category']->findAll();
+    $admin             = $app['dao.admin']->get();
+    $post              = $app['dao.post']->getPost($id);
+
+    return $app['twig']->render('form-edit-post.html.twig', array('blog'  => $blogInfo,
+        'categories' => $categories,
+        'admin' => $admin,
+        'post' => $post));
+
+})->bind('edit_post_form');
+
+
+// Administration: List of editable posts
+$app->get('/admin/posts-overview', function() use ($app) {
     $blogInfo = $app['dao.blog']->find();
 
     return $app['twig']->render('post-overview.html.twig', array('blog'  => $blogInfo));
 
-})->bind('edit_post_form');
+})->bind('posts_overview');

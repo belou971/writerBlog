@@ -12,6 +12,7 @@ namespace writerBlog\DAO;
     use writerBlog\DAO\Dao;
     use Doctrine\DBAL\Connection;
     use Symfony\Component\HttpFoundation\Request;
+    use writerBlog\Domain\ECommentRead;
     use writerBlog\Domain\ECommentStatus;
     use writerBlog\Domain\Comment;
     use writerBlog\Domain\EPostStatus;
@@ -70,6 +71,26 @@ namespace writerBlog\DAO;
             $commentsTree = $this->buildTree($comments);
 
             return $commentsTree;
+        }
+
+        /**
+         * @return int number of comment not read
+         */
+        public function getNumberOfNewComments()
+        {
+            $queryBuilder = $this->getDB()->createQueryBuilder();
+            $queryBuilder->select('*')
+                ->from('t_comment')
+                ->where('com_read = ?')
+                ->setParameter(0, ECommentRead::NOT_READ)
+                ->orderBy('com_date_creation', 'ASC');
+
+            $statement = $queryBuilder->execute();
+            if (is_int($statement)) {
+                return 0;
+            }
+
+            return $statement->rowCount();
         }
 
         /**
@@ -174,6 +195,16 @@ namespace writerBlog\DAO;
             //sent a message to the reader by mail
         }
 
+        public function markAsRead($id)
+        {
+            return $this->updateCommentRead($id, ECommentRead::READ);
+        }
+
+        public function markAsUnread($id)
+        {
+            return $this->updateCommentRead($id, ECommentRead::NOT_READ);
+        }
+
         private function updateCommentStatus($id, $new_status)
         {
             $queryBuilder = $this->getDB()->createQueryBuilder();
@@ -181,6 +212,24 @@ namespace writerBlog\DAO;
                 ->set('com_status', '?')
                 ->where('com_id = ?')
                 ->setParameter(0, $new_status)
+                ->setParameter(1, $id);
+
+            return $queryBuilder->execute();
+        }
+
+        /**
+         * Update the reading stat of a given comment
+         * @param $id
+         * @param $read_type
+         * @return \Doctrine\DBAL\Driver\Statement|int
+         */
+        private function updateCommentRead($id, $read_type)
+        {
+            $queryBuilder = $this->getDB()->createQueryBuilder();
+            $queryBuilder->update('t_comment')
+                ->set('com_read', '?')
+                ->where('com_id = ?')
+                ->setParameter(0, $read_type)
                 ->setParameter(1, $id);
 
             return $queryBuilder->execute();
@@ -198,7 +247,8 @@ namespace writerBlog\DAO;
                               'com_message' => '?',
                               'com_status' => '?',
                               'com_date_creation' => '?',
-                              'com_parent_id' => '?');
+                              'com_parent_id' => '?',
+                              'com_read' => '?');
 
             $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->insert('t_comment')
@@ -209,7 +259,8 @@ namespace writerBlog\DAO;
                          ->setParameter(3,$comment->getMessage())
                          ->setParameter(4,$comment->getStatus())
                          ->setParameter(5,date("Y-m-d"))
-                         ->setParameter(6,$comment->getParentId());
+                         ->setParameter(6,$comment->getParentId())
+                         ->setParameter(7,$comment->getRead());
 
             return $queryBuilder->execute();
         }
@@ -230,6 +281,7 @@ namespace writerBlog\DAO;
             $comment->setStatus($row['com_status']);
             $comment->setCreationDate($row['com_date_creation']);
             $comment->setMessage($row['com_message']);
+            $comment->setRead($row['com_read']);
 
             if( !is_null($row['com_parent_id']) ) {
                 $comment->setParentId($row['com_parent_id']);

@@ -20,6 +20,52 @@ namespace writerBlog\DAO;
     class PostDAO extends Dao
     {
         /**
+         * @param string $username username of the user currently connected in admin session
+         * @return int Number of published post by a user identified by its username
+         */
+        public function getNumberOfPublishedPost($username)
+        {
+            $queryBuilder = $this->getDB()->createQueryBuilder();
+            $queryBuilder->select('*')
+                ->from('t_post', 'p')
+                ->innerJoin('p', 't_admin', 'a', 'p.post_id_author = a.adm_id')
+                ->where('post_status = ?')
+                ->andWhere('a.adm_login = ?')
+                ->setParameter(0, EPostStatus::PUBLISHED)
+                ->setParameter(1, $username);
+
+            $statement = $queryBuilder->execute();
+            if (is_int($statement)) {
+                return 0;
+            }
+
+            return $statement->rowCount();
+        }
+
+        /**
+         * @param string $username username of the user currently connected in admin session
+         * @return int Number of unpublished post by a user identified by its username
+         */
+        public function getNumberOfUnpublishedPost($username)
+        {
+            $queryBuilder = $this->getDB()->createQueryBuilder();
+            $queryBuilder->select('*')
+                ->from('t_post', 'p')
+                ->innerJoin('p', 't_admin', 'a', 'p.post_id_author = a.adm_id')
+                ->where('post_status = ?')
+                ->andWhere('a.adm_login = ?')
+                ->setParameter(0, EPostStatus::NOT_PUBLISHED)
+                ->setParameter(1, $username);
+
+            $statement = $queryBuilder->execute();
+            if (is_int($statement)) {
+                return 0;
+            }
+
+            return $statement->rowCount();
+        }
+
+        /**
          * Return a list of all posts, sorted by publication date (most recent first).
          *
          * @return array A list of all posts.
@@ -50,6 +96,34 @@ namespace writerBlog\DAO;
             }
             return $posts;
 
+        }
+
+        public function getAvailablePostsCreatedBy($username) {
+            $queryBuilder = $this->getDB()->createQueryBuilder();
+            $queryBuilder->select('*')
+                ->from('t_post', 'p')
+                ->innerJoin('p', 't_admin', 'a', 'p.post_id_author = a.adm_id')
+                ->where('post_status = ?')
+                ->orWhere('post_status = ?')
+                ->andWhere('a.adm_login = ?')
+                ->setParameter(0, EPostStatus::PUBLISHED)
+                ->setParameter(1, EPostStatus::NOT_PUBLISHED)
+                ->setParameter(2, $username);
+
+            $statement = $queryBuilder->execute();
+            if (is_int($statement)) {
+                return null;
+            }
+
+            $results = $statement->fetchAll();
+
+            // Convert query result to an array of domain objects
+            $posts = array();
+            foreach ($results as $row) {
+                $post_Id = $row['post_id'];
+                $posts[$post_Id] = $this->buildDomainObject($row);
+            }
+            return $posts;
         }
 
         /**
@@ -95,7 +169,8 @@ namespace writerBlog\DAO;
             $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->select('p.post_id', 'p.post_title', 'p.post_content',
                 'p.post_extract', 'p.post_nb_visit', 'p.post_date_modification',
-                'p.post_image', 'p.post_date_creation', 'p.post_id_author', 'p.post_category_id')
+                'p.post_image', 'p.post_date_creation', 'p.post_id_author',
+                'p.post_category_id', 'p.post_status')
                 ->from('t_post', 'p')
                 ->where('p.post_id = ?')
                 ->setParameter(0, $id);
@@ -237,6 +312,7 @@ namespace writerBlog\DAO;
             $Post->setCreationDate($row['post_date_creation']);
             $Post->setAuthor($row['post_id_author']);
             $Post->setIdCategory($row['post_category_id']);
+            $Post->setEStatus($row['post_status']);
 
             return $Post;
         }

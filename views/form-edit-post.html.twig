@@ -34,7 +34,7 @@
             <form class="form-group-lg post-form" name="editForm" id="editForm" method="post">
                 <div class="form-group row">
                     <div class="col-lg-12">
-                        <input id="titlePost" name="titlePost" class="form-control" type="text" placeholder="Entrer le titre du Post" required>
+                        <input id="titlePost" name="titlePost" class="form-control" type="text" value="{{ post.getSTitle }}" placeholder="Entrer le titre du Post" required>
                     </div>
                 </div>
 
@@ -54,9 +54,10 @@
                 <div class="form-row-group row">
                     <div class=" col-lg-5">
                         <select class="form-control" id="categories" name="categories">
-                            <option selected>Default</option>
-                            <option>2</option>
-                            <option>3</option>
+                            {% for category in categories %}
+                                {%  set select = (category.getIId == post.getIdCategory)?'selected' %}
+                            <option {{ select }}>{{category.getSName}}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="col-lg-6">
@@ -79,8 +80,9 @@
                         <h4><label class="text-primary">Status</label></h4>
                     </div>
                     <div class="col-md-5 btn-group btn-toggle">
-                        <button class="btn btn-default"><i class="fa fa-lg fa-eye"></i> Publier</button>
-                        <button class="btn btn-success active"><i class="fa fa-lg fa-eye-slash"></i> Ne pas publier</button>
+                        {% set isPublished = (post.getEStatus == 'PUBLISHED') %}
+                        <button class="btn {{ (isPublished == true)?'active btn-success':'btn-default' }}"><i class="fa fa-lg fa-eye"></i> Publier</button>
+                        <button class="btn {{ (isPublished == false)?'active btn-default':'btn-default' }}"><i class="fa fa-lg fa-eye-slash"></i> Ne pas publier</button>
                     </div>
                     <div class="col-md-5">
                         <button id="deleteBtn" name="deleteBtn" class="btn btn-primary border-radius-btn" type="button">
@@ -92,7 +94,7 @@
                 <div class="form-row-group row">
                     <div class="col-lg-12">
                                 <textarea id="contentPost">
-
+                                {{ post.getSContent }}
                                 </textarea>
                     </div>
                 </div>

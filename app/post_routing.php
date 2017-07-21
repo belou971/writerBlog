@@ -68,46 +68,40 @@ $app->post('/update', function (Request $request) use($app) {
 });
 
 //Path to publish a post by Id
-$app->get('/publish/post/{id}', function ($id) use($app) {
-    $count = $app['dao.post']->publishPost($id);
-
-    $msg = $count.' row(s) with post status modified!\n';
+$app->post('/publish/', function (Request $request) use($app) {
+    $count = $app['dao.post']->publishPost($request->get('id'));
+    $post = $app['dao.post']->getPost($request->get('id'));
+    $data = array('post_status' => "");
 
     if($count > 0) {
-        $response = new Response($msg, 201);
+        $data = array('post_status' => $post->getEStatus());
+        return $app->json($data, 201);
     }
     else {
-        $response = new Response($msg, 404);
+        return $app->json($data, 404);
     }
-    return $response;
-});
+
+})->bind('published_post');
 
 //Path to hide a post by Id
-$app->get('hide/post/{id}', function ($id) use($app) {
-    $count = $app['dao.post']->hidePost($id);
+$app->post('/hide/', function (Request $request) use($app) {
 
-    $msg = $count.' row(s) with post status modified!\n';
+    $count = $app['dao.post']->hidePost($request->get('id'));
+    $post = $app['dao.post']->getPost($request->get('id'));
+    $data = array('post_status' => "");
 
     if($count > 0) {
-        $response = new Response($msg, 201);
+        $data = array('post_status' => $post->getEStatus());
+        return $app->json($data, 201);
     }
     else {
-        $response = new Response($msg, 404);
+        return $app->json($data, 404);
     }
-    return $response;
-});
+})->bind('hidden_post');
 
 //Delete a post identified by its Id
-$app->delete('/post/{id}', function ($id) use($app) {
+$app->get('/del/post/{id}', function ($id) use($app) {
    $countDeletion = $app['dao.post']->deletePost($id);
 
-    $msg = $countDeletion.' row(s) deleted!\n';
-
-    if($countDeletion > 0) {
-        $response = new Response($msg, 201);
-    }
-    else {
-        $response = new Response($msg, 404);
-    }
-    return $response;
-});
+    return $countDeletion;
+})->bind('delete_post');

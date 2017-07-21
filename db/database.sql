@@ -115,6 +115,7 @@ CREATE TABLE t_comment (
   com_status        ENUM('published', 'not_published', 'malicious', 'disabled') NOT NULL,
   com_date_creation DATETIME                                                    NOT NULL,
   com_message       TEXT                                                        NOT NULL,
+  com_read          ENUM('NOT_READ', 'READ')          DEFAULT 'NOT_READ'        NOT NULL,
   FOREIGN KEY (com_post_id) REFERENCES t_post (post_id),
   FOREIGN KEY (com_parent_id) REFERENCES t_comment (com_id)
 )

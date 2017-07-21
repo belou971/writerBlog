@@ -10,6 +10,30 @@
     <link href="{{ asset('css/writerblog-admin-backend.css') }}" rel="stylesheet">
 {% endblock %}
 
+{% block js %}
+    <!-- Personal JavaScript -->
+    <script src="{{ asset('/js/dynamicFront.js') }}"></script>
+    <script type="text/javascript">
+        $('.fa-eye').click(function(event) {
+            event.preventDefault();
+            var $url = '{{ path("hidden_post") }}',
+                $classToAdd = 'fa-eye-slash red-color',
+                $classToRemove = 'fa-eye green-color';
+
+            changePostStatus($(this), $url, $classToRemove, $classToAdd );
+        });
+
+        $('.fa-eye-slash').click(function(event) {
+            event.preventDefault();
+            var $url = '{{ path("published_post") }}',
+                $classToRemove = 'fa-eye-slash red-color',
+                $classToAdd = 'fa-eye green-color';
+
+            changePostStatus($(this), $url, $classToRemove, $classToAdd );
+        });
+    </script>
+{% endblock %}
+
 {% block pageHeader %}Dashboard{% endblock %}
 
 {% block pageContent %}
@@ -22,11 +46,12 @@
                             <i class="fa fa-comments fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">6</div>
+                            <div class="huge">{{ nbNewComments }}</div>
                             <div>Nouveaux Commentaires!</div>
                         </div>
                     </div>
                 </div>
+                <!--
                 <a href="#">
                     <div class="panel-footer footer-font-size">
                         <span class="pull-left">Voir</span>
@@ -34,6 +59,7 @@
                         <div class="clearfix"></div>
                     </div>
                 </a>
+                -->
             </div>
         </div>
         <div class="col-lg-4 col-md-4">
@@ -44,11 +70,12 @@
                             <i class="fa fa-exclamation-triangle fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">2</div>
-                            <div>Nouveaux Signalements!</div>
+                            <div class="huge">{{ nbUnpublishedPost }}</div>
+                            <div>Posts non publiés!</div>
                         </div>
                     </div>
                 </div>
+                <!--
                 <a href="#">
                     <div class="panel-footer footer-font-size">
                         <span class="pull-left">Voir</span>
@@ -56,6 +83,7 @@
                         <div class="clearfix"></div>
                     </div>
                 </a>
+                -->
             </div>
         </div>
         <div class="col-lg-4 col-md-4">
@@ -66,11 +94,12 @@
                             <i class="fa fa-file fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">24</div>
+                            <div class="huge">{{ nbPublishedPost }}</div>
                             <div>Posts publiés!</div>
                         </div>
                     </div>
                 </div>
+                <!--
                 <a href="#">
                     <div class="panel-footer footer-font-size">
                         <span class="pull-left">Voir</span>
@@ -78,6 +107,7 @@
                         <div class="clearfix"></div>
                     </div>
                 </a>
+                -->
             </div>
         </div>
     </div>
@@ -125,47 +155,23 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td class="fa-lg">index</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Eva Cavaldas</td>
-                                <td class="fa-lg hidden-sm hidden-xs">2017-05-12 00:00:00</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Default</td>
-                                <td><a href="#"><i class="fa fa-lg fa-eye green-color"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-pencil-square-o"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-trash"></i></a></td>
+                            {% for post in posts %}
+                                {% set webname = ( post.getAuthor == admin.getId)?admin.getWebName:Unconnu %}
+                                {% set category_id = post.getIdCategory %}
+                                {% set category = categories[ category_id] %}
+                                {% set addClass = (post.getEStatus == 'PUBLISHED')?'fa-eye green-color':'fa-eye-slash red-color' %}
+                            <tr id={{ post.getIId }}>
+                                <td class="fa-lg">{{ post.getSTitle }}</td>
+                                <td class="fa-lg hidden-sm hidden-xs">{{ webname }}</td>
+                                <td class="fa-lg hidden-sm hidden-xs">{{ post.getCreationDate }}</td>
+                                <td class="fa-lg hidden-sm hidden-xs">{{ category.getSName }}</td>
+                                <td><a href="javascript:;"><i class="fa fa-lg {{ addClass }}"></i></a></td>
+                                <td><a href="{{ path('edit_post_form', {'id': post.getIId}) }}"><i class="fa fa-lg fa-pencil-square-o"></i></a></td>
+                                <td><a href="javascript:;"><i class="fa fa-lg fa-trash"></i></a></td>
                             </tr>
-                            <tr>
-                                <td class="fa-lg">contact</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Eva Cavaldas</td>
-                                <td class="fa-lg hidden-sm hidden-xs">2017-05-12 00:00:00</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Default</td>
-                                <td><a href="#"><i class="fa fa-lg fa-eye-slash red-color"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-pencil-square-o"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-trash"></i></a></td>
-                            </tr>
-                            <tr>
-                                <td class="fa-lg">connexion</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Eva Cavaldas</td>
-                                <td class="fa-lg hidden-sm hidden-xs">2017-05-12 00:00:00</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Default</td>
-                                <td><a href="#"><i class="fa fa-lg fa-eye green-color"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-pencil-square-o"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-trash"></i></a></td>
-                            </tr>
-                            <tr>
-                                <td class="fa-lg">Un de plus</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Eva Cavaldas</td>
-                                <td class="fa-lg hidden-sm hidden-xs">2017-05-12 00:00:00</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Default</td>
-                                <td><a href="#"><i class="fa fa-lg fa-eye green-color"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-pencil-square-o"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-trash"></i></a></td>
-                            </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
-                    </div>
-                    <div class="text-right">
-                        <a href="#">Voir tous les posts <i class="fa fa-arrow-circle-right"></i></a>
                     </div>
                 </div>
             </div>

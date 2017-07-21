@@ -214,9 +214,9 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #e5f2f7!important;
 }
 
-.table-hover>tbody>tr>td {
-    text-align: center;
-}
+/*.table-hover>tbody>tr>td {
+   text-align: center;
+}*/
 
 /* ---- Panels ---- */
 .panel-green > .panel-heading {
