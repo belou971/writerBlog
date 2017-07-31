@@ -28,7 +28,7 @@
     <div class="row">
         <div class="center-me col-lg-offset-1 col-lg-10 col-lg-offset-1 col-md-12">
 
-            <form class="form-group-lg post-form login-form-width" name="newPostForm" id="newPostForm" method="post">
+            <form class="form-group-lg post-form login-form-width" name="newPostForm" id="newPostForm" method="post" action="{{ path('create_post') }}">
                 <div class="form-group row">
                     <div class="col-lg-12">
                         <input id="titlePost" name="titlePost" class="form-control" type="text" placeholder="Entrer le titre du Post" required>
@@ -51,9 +51,10 @@
                 <div class="form-row-group row">
                     <div class=" col-lg-5">
                         <select class="form-control" id="categories" name="categories">
-                            <option selected>Default</option>
-                            <option>2</option>
-                            <option>3</option>
+                            {% for category in categories %}
+                                {% set default=(category.getIId == 0)?"select" %}
+                                <option value="{{ category.getIId }}" {{ default }}>{{ category.getSName }}</option>
+                            {% endfor %}
                         </select>
                     </div>
                     <div class="col-lg-6">
@@ -65,10 +66,13 @@
                     <h4><label for="inputCategory" class="text-primary">Nouvelle catégorie</label></h4>
                     <div class="col-lg-10">
                         <input id="inputCategory" name="inputCategory" class="form-control" type="text" placeholder="Entrer un libellé">
+                        <small class="help-block personal_validation" data-bv-result="NOT_VALIDATED" style="display: none;"></small>
                     </div>
+                    <!--
                     <div class="col-lg-2">
-                        <button id="addCategoryBtn" name="addCategoryBtn" class="btn input-lg btn-block btn-primary border-radius-btn category-btn" type="submit">Ajouter</button>
+                        <button id="addCategoryBtn" name="addCategoryBtn" class="btn input-lg btn-block btn-primary border-radius-btn category-btn" type="button">Ajouter</button>
                     </div>
+                    -->
                 </div>
 
                 <div class="row">

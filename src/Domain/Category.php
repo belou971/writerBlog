@@ -15,12 +15,13 @@ class Category
     private $s_name;
 
     const DEFAULT_NAME = "default";
+    const UNDEFINED = -1;
 
     /**
      * Category constructor.
      * @param $i_id
      */
-    public function __construct($i_id)
+    public function __construct($i_id=Post::UNDEFINED)
     {
         $this->i_id = $i_id;
         $this->s_name = Category::DEFAULT_NAME;

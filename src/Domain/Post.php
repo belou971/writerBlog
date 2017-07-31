@@ -38,7 +38,7 @@ namespace writerBlog\Domain {
             $this->i_id = $id;
             $this->s_title = null;
             $this->id_author = null;
-            $this->s_content = null;
+            $this->s_content = "";
             $this->s_extract = null;
             $this->e_status = EPostStatus::NOT_PUBLISHED;
             $this->s_url_image = null;
@@ -174,10 +174,12 @@ namespace writerBlog\Domain {
         {
             $this->s_content = $s_content;
 
-            if( strlen($this->s_content) <= Post::EXTRACT_SIZE ) {
-                $this->setSExtract($this->s_content);
+            $extract= strip_tags($this->s_content);
+
+            if( strlen($extract) <= Post::EXTRACT_SIZE ) {
+                $this->setSExtract($extract);
             } else {
-                $this->setSExtract(substr($this->s_content, 0, Post::EXTRACT_SIZE));
+                $this->setSExtract(substr($extract, 0, Post::EXTRACT_SIZE));
             }
 
             return $this;

@@ -9,6 +9,7 @@
 
 namespace writerBlog\DAO;
 
+    use writerBlog\Domain\LazyCaptcha;
     use writerBlog\DAO\Dao;
     use Doctrine\DBAL\Connection;
     use Symfony\Component\HttpFoundation\Request;
@@ -19,7 +20,6 @@ namespace writerBlog\DAO;
 
     class CommentDAO extends Dao
     {
-
         /**
          * @param int $id Takes the comment Id in parameter
          * @return null|Comment Gets the Comment Object corresponding to the given Id
@@ -55,10 +55,11 @@ namespace writerBlog\DAO;
             $queryBuilder->select('*')
                 ->from('t_comment')
                 ->where('com_post_id = ?')
-                ->andWhere('com_status = ?')
+                ->andWhere('com_status = ? OR com_status = ?')
                 ->setParameter(0, $post_id)
                 ->setParameter(1, ECommentStatus::PUBLISHED)
-                ->orderBy('com_date_creation', 'ASC');
+                ->setParameter(2, ECommentStatus::MALICIOUS)
+                ->orderBy('com_date_creation', 'DESC');
 
             $statement = $queryBuilder->execute();
             if (is_int($statement)) {
@@ -178,6 +179,19 @@ namespace writerBlog\DAO;
             return $this->updateCommentStatus($id, ECommentStatus::NOT_PUBLISHED);
         }
 
+        public function getForm($post_id, $parent_id)
+        {
+            $captcha = new LazyCaptcha();
+
+            $keywords_to_search = array("%%post_id%%", "%%parent_id%%", "%%img_path%%");
+            $replaced_by = array($post_id, $parent_id, LazyCaptcha::IMG_SRC);
+
+            $htmlForm = str_replace($keywords_to_search, $replaced_by, CommentDAO::FORM_TEMPLATE);
+
+            //return $htmlForm;
+            return "";
+        }
+
         /**
          * @param $id
          * @return \Doctrine\DBAL\Driver\Statement|int
@@ -189,10 +203,8 @@ namespace writerBlog\DAO;
 
         public function alertComment(Request $requestForm)
         {
-            return $this->updateCommentStatus($requestForm->get('comment_id'), ECommentStatus::MALICIOUS);
+            return $this->updateCommentStatus($requestForm->get('id'), ECommentStatus::MALICIOUS);
 
-            //sent a message to admin by notifierManager
-            //sent a message to the reader by mail
         }
 
         public function markAsRead($id)
@@ -241,14 +253,19 @@ namespace writerBlog\DAO;
          */
         private function save(Comment $comment)
         {
+            $responseData = array('nb_row' => 0,
+                'post_id' => $comment->getPostId(),
+                'comment_id' => -1,
+                'parent' => "-1");
+
             $commentData = array('com_post_id' => '?',
                               'com_pseudo' => '?',
                               'com_email' => '?',
                               'com_message' => '?',
                               'com_status' => '?',
                               'com_date_creation' => '?',
-                              'com_parent_id' => '?',
-                              'com_read' => '?');
+                              'com_read' => '?',
+                              'com_parent_id' => '?');
 
             $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->insert('t_comment')
@@ -259,10 +276,17 @@ namespace writerBlog\DAO;
                          ->setParameter(3,$comment->getMessage())
                          ->setParameter(4,$comment->getStatus())
                          ->setParameter(5,date("Y-m-d"))
-                         ->setParameter(6,$comment->getParentId())
-                         ->setParameter(7,$comment->getRead());
+                         ->setParameter(6,$comment->getRead())
+                         ->setParameter(7,$comment->getParentId());
 
-            return $queryBuilder->execute();
+            $result = $queryBuilder->execute();
+
+            if(is_int($result) and $result> 0){
+                $responseData['nb_row'] = $result;
+                $responseData['comment_id'] = $queryBuilder->getConnection()->lastInsertId();
+            }
+
+            return $responseData;
         }
 
 
@@ -297,10 +321,114 @@ namespace writerBlog\DAO;
         private function fillData(Comment $comment, Request $request)
         {
             $comment->setEmail($request->get('email'));
-            $comment->setPseudo($request->get('pseudo'));
+            $comment->setPseudo($request->get('name'));
             $comment->setMessage($request->get('message'));
-            $comment->setParentId($request->get('parent'));
+            if($request->get('pid')<0)
+                $comment->setParentId(null);
+            else
+                $comment->setParentId($request->get('pid'));
+
         }
 
+        const FORM_TEMPLATE = "<div class=\"comment-form text-center modal fade\" id=\"modal-comment\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\" aria-hidden=\"true\" style=\"display: none;\">
+    <div class=\"modal-dialog\" role=\"document\">
+        <div class=\"modal-content\">
+            <div class=\"modal-header\">
+                <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">
+                    <span aria-hidden=\"true\">&times;</span>
+                </button>
+                <h3>Laissez un commentaire</h3>
+            </div>
+            <div class=\"modal-body\">
+                <form method=\"post\" action=\"\/comment\/add\">
+                    <div class=\"row\">
+                        <div class=\"form-suivre col-md-12\">
+                            <div class=\"form-group\">
+                                <label class=\"sr-only\" for=\"message\">Name</label>
+                                <textarea class=\"form-control\" id=\"message\" name=\"message\" placeholder=\"Votre message\" rows=\"4\"></textarea>
+                                <input name=\"post_id\" class=\"postid_hid\" type=\"hidden\"  value=\"%%post_id%%\">
+                                <input name=\"pid\" class=\"pid_hid\" type=\"hidden\"  value=\"%%parent_id%%\">
+                            </div>
+                        </div>
+                    </div>
+                    <div class=\"row\">
+                        <div class=\"form-suivre col-md-6 \">
+                            <div class=\"form-group\">
+                                <label class=\"sr-only\" for=\"name\">Name</label>
+                                <div class=\"input-group\">
+                                    <span class=\"input-group-addon\"><i class=\"fa fa-user fa-fw\"></i></span>
+                                    <input type=\"text\" name=\"name\" class=\"form-control\" id=\"name\" required placeholder=\"Votre nom\">
+                                </div>
+                            </div>
+                        </div>
 
+                        <div class=\"form-suivre col-md-6\">
+                            <div class=\"form-group\">
+                                <label class=\"sr-only\" for=\"email\">Email</label>
+                                <div class=\"input-group\">
+                                    <span class=\"input-group-addon\"><i class=\"fa fa-envelope fa-fw\"></i></span>
+                                    <input type=\"email\" name=\"email\" class=\"form-control\" id=\"email\" required placeholder=\"Votre e-mail\">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class=\"row\">
+                        <div class=\"col-md-12\">
+
+                        </div>
+                    </div>
+
+                    <div class=\"row captcha-lazy\">
+                        <div class=\"col-md-push-2 col-md-8\">
+                            <label class=\"label\">Vérifions que vous n'êtes pas un bot</label>
+                            <div class=\"panel panel-danger\">
+                                <div class=\"panel-heading text-left\">
+                                    <h5>LazyCAPTCHA</h5>
+                                </div>
+                                <div class=\"panel-body\">
+                                    <h6 class=\"text-danger\">Entrer le résultat:</h6>
+                                    <div class=\"row\">
+                                        <div class=\"col-sm-8\">
+                                            <img src=\"%%img_path%%\" alt=\"code de validation\">
+                                        </div>
+                                        <div class=\"col-sm-1 text-center\">
+                                            <span class=\"text-danger\">=</span>
+                                        </div>
+                                        <div class=\"col-sm-3\">
+                                            <input type=\"text\" name=\"code\" class=\"form-control\" id=\"code\" placeholder=\"Résultat\">
+                                        </div>
+                                    </div>
+                                    <div class=\"row\">
+                                        <div class=\"col-sm-12 text-center\">
+                                            <button type=\"button\" class=\"btn btn-danger btn-code\">confirmer</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class=\"panel-footer\">
+                                    <div class=\"row text-warning\">
+                                        <div class=\"col-sm-1\">
+                                            <i class=\"fa fa-thumbs-o-down\"></i>
+                                        </div>
+                                        <div class=\"col-sm-10\">
+                                            <h5>Le code est incorrect, recommencer</h5>
+                                        </div>
+                                        <div class=\"col-sm-1\">
+                                            <i class=\"fa fa-refresh\" style=\"display: none\"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                        </div>
+                    </div>
+
+                    <div class=\"row\">
+                        <div class=\" form-suivre col-md-12\">
+                            <button type=\"submit\" class=\"btn btn-primary\" disabled>Valider</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>";
     }

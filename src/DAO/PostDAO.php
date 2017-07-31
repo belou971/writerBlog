@@ -73,7 +73,7 @@ namespace writerBlog\DAO;
         public function findAll()
         {
             $queryBuilder = $this->getDB()->createQueryBuilder();
-            $queryBuilder->select('p.post_id', 'p.post_title', 'p.post_content',
+            $queryBuilder->select('p.post_id', 'p.post_title', 'p.post_status', 'p.post_content',
                 'p.post_extract', 'p.post_nb_visit', 'p.post_date_modification',
                 'p.post_image', 'p.post_date_creation', 'p.post_id_author', 'p.post_category_id')
                 ->from('t_post', 'p')
@@ -134,7 +134,7 @@ namespace writerBlog\DAO;
         public function find($idx_to_start ,$number_row_max)
         {
             $queryBuilder = $this->getDB()->createQueryBuilder();
-            $queryBuilder->select('p.post_id', 'p.post_title', 'p.post_content',
+            $queryBuilder->select('p.post_id', 'p.post_title', 'p.post_status', 'p.post_content',
                 'p.post_extract', 'p.post_nb_visit', 'p.post_date_modification',
                 'p.post_image', 'p.post_date_creation', 'p.post_id_author', 'p.post_category_id')
                 ->from('t_post', 'p')
@@ -167,7 +167,7 @@ namespace writerBlog\DAO;
         public function getPost($id)
         {
             $queryBuilder = $this->getDB()->createQueryBuilder();
-            $queryBuilder->select('p.post_id', 'p.post_title', 'p.post_content',
+            $queryBuilder->select('p.post_id', 'p.post_title', 'p.post_status', 'p.post_content',
                 'p.post_extract', 'p.post_nb_visit', 'p.post_date_modification',
                 'p.post_image', 'p.post_date_creation', 'p.post_id_author',
                 'p.post_category_id', 'p.post_status')
@@ -190,12 +190,12 @@ namespace writerBlog\DAO;
          * @param Admin $author
          * @return \Doctrine\DBAL\Driver\Statement|int
          */
-        public function createPost(Request $request, Admin $author)
+        public function createPost(Request $request, $authorId)
         {
             $nb_row = 0;
 
             $post = new Post();
-            $post->setAuthor($author->getId());
+            $post->setAuthor($authorId);
 
             $this->fillData($post, $request);
 
@@ -210,7 +210,7 @@ namespace writerBlog\DAO;
         {
             $nb_row = 0;
             $post = new Post($request->get('post_id'));
-
+            $post->setSContent($request->get('content'));
             $this->fillData($post, $request);
 
             return $this->update($post);
@@ -219,12 +219,23 @@ namespace writerBlog\DAO;
 
         public function publishPost($id)
         {
-            return $this->updatePostStatus($id, EPostStatus::PUBLISHED);
+            $status = EPostStatus::NOT_PUBLISHED;
+            $count  = $this->updatePostStatus($id, EPostStatus::PUBLISHED);
+            if($count > 0) {
+                $status = EPostStatus::PUBLISHED;
+            }
+
+            return $status;
         }
 
-        public function hidePost($id)
-        {
-            return $this->updatePostStatus($id, EPostStatus::NOT_PUBLISHED);
+        public function hidePost($id ) {
+            $status = EPostStatus::PUBLISHED;
+            $count = $this->updatePostStatus($id, EPostStatus::NOT_PUBLISHED);
+            if($count > 0) {
+                $status = EPostStatus::NOT_PUBLISHED;
+            }
+
+            return $status;
         }
 
         /**
@@ -239,6 +250,7 @@ namespace writerBlog\DAO;
 
         private function updatePostStatus($id, $new_status)
         {
+
             $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->update('t_post', 'p')
                 ->set('p.post_status', '?')
@@ -255,6 +267,8 @@ namespace writerBlog\DAO;
          */
         private function save(Post $post)
         {
+            $data = array('nb_row' => 0, 'post_id' => 0);
+
             $postData = array('post_title' => '?',
                               'post_content' => '?',
                               'post_date_creation' => '?',
@@ -272,7 +286,13 @@ namespace writerBlog\DAO;
                          ->setParameter(4,$post->getSExtract())
                          ->setParameter(5,$post->getAuthor());
 
-            return $queryBuilder->execute();
+            $result = $queryBuilder->execute();
+            if(is_int($result) and $result> 0){
+                $data['nb_row'] = $result;
+                $data['post_id'] = $queryBuilder->getConnection()->lastInsertId();
+            }
+
+            return $data;
         }
 
 
@@ -323,9 +343,8 @@ namespace writerBlog\DAO;
          */
         private function fillData(Post $post, Request $request)
         {
-            $post->setSTitle($request->get('title'));
-            $post->setSContent($request->get('content'));
-            $post->setIdCategory($request->get('category'));
+            $post->setSTitle($request->get('titlePost'));
+            $post->setIdCategory($request->get('categories'));
         }
 
 

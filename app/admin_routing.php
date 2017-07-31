@@ -57,6 +57,7 @@ $app->get('/admin/', function() use ($app) {
     }
 
     $user              = $token->getUser();
+
     $nbPublishedPost   = $app['dao.post']->getNumberOfPublishedPost($user->getUsername());
     $nbUnpublishedPost = $app['dao.post']->getNumberOfUnpublishedPost($user->getUsername());
     $availablePosts    = $app['dao.post']->getAvailablePostsCreatedBy($user->getUsername());
@@ -77,8 +78,10 @@ $app->get('/admin/', function() use ($app) {
 // Adminstration: New post form page
 $app->get('/admin/new-post', function() use ($app) {
     $blogInfo = $app['dao.blog']->find();
+    $categories = $app['dao.category']->findAll();
 
-    return $app['twig']->render('form-new-post.html.twig', array('blog'  => $blogInfo));
+    return $app['twig']->render('form-new-post.html.twig', array('blog'  => $blogInfo,
+                                                                 'categories' => $categories));
 
 })->bind('new_post_form');
 
@@ -105,3 +108,20 @@ $app->get('/admin/posts-overview', function() use ($app) {
     return $app['twig']->render('post-overview.html.twig', array('blog'  => $blogInfo));
 
 })->bind('posts_overview');
+
+//Administration: get identical category if it exists
+$app->post('/admin/existCategory', function(Request $request) use ($app) {
+   $categoryData = $app['dao.category']->existCategory($request->get('newCategory'));
+
+    if(count($categoryData) > 0) {
+        $response = $app->json($categoryData);
+    }
+    else {
+        $categoryData = array('cat_name' => "",
+                              'cat_counter' => "0",
+                              'message' => "Une erreur s'est produit à la lecture du service");
+        $response = $app->json($categoryData, 304);
+    }
+
+    return $response;
+})->bind('existCategory');

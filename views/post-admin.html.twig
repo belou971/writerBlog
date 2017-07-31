@@ -14,22 +14,20 @@
     <!-- Personal JavaScript -->
     <script src="{{ asset('/js/dynamicFront.js') }}"></script>
     <script type="text/javascript">
-        $('.fa-eye').click(function(event) {
+        $('.status').click(function(event) {
             event.preventDefault();
-            var $url = '{{ path("hidden_post") }}',
-                $classToAdd = 'fa-eye-slash red-color',
-                $classToRemove = 'fa-eye green-color';
 
-            changePostStatus($(this), $url, $classToRemove, $classToAdd );
-        });
+            var $classToHide = 'fa-eye-slash red-color',
+                $classToPublish = 'fa-eye green-color';
 
-        $('.fa-eye-slash').click(function(event) {
-            event.preventDefault();
-            var $url = '{{ path("published_post") }}',
-                $classToRemove = 'fa-eye-slash red-color',
-                $classToAdd = 'fa-eye green-color';
-
-            changePostStatus($(this), $url, $classToRemove, $classToAdd );
+            if($(this).hasClass("fa-eye")) {
+                var $url = '{{ path("hidden_post") }}';
+                changePostStatus($(this), $url, $classToPublish, $classToHide);
+            }
+            if($(this).hasClass("fa-eye-slash")) {
+                var $url = '{{ path("published_post") }}';
+                changePostStatus($(this), $url, $classToHide, $classToPublish);
+            }
         });
     </script>
 {% endblock %}
@@ -70,7 +68,7 @@
                             <i class="fa fa-exclamation-triangle fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">{{ nbUnpublishedPost }}</div>
+                            <div class="huge unpublished">{{ nbUnpublishedPost }}</div>
                             <div>Posts non publiés!</div>
                         </div>
                     </div>
@@ -94,7 +92,7 @@
                             <i class="fa fa-file fa-5x"></i>
                         </div>
                         <div class="col-xs-9 text-right">
-                            <div class="huge">{{ nbPublishedPost }}</div>
+                            <div class="huge published">{{ nbPublishedPost }}</div>
                             <div>Posts publiés!</div>
                         </div>
                     </div>
@@ -165,7 +163,7 @@
                                 <td class="fa-lg hidden-sm hidden-xs">{{ webname }}</td>
                                 <td class="fa-lg hidden-sm hidden-xs">{{ post.getCreationDate }}</td>
                                 <td class="fa-lg hidden-sm hidden-xs">{{ category.getSName }}</td>
-                                <td><a href="javascript:;"><i class="fa fa-lg {{ addClass }}"></i></a></td>
+                                <td><a href="javascript:;"><i class="status fa fa-lg {{ addClass }}"></i></a></td>
                                 <td><a href="{{ path('edit_post_form', {'id': post.getIId}) }}"><i class="fa fa-lg fa-pencil-square-o"></i></a></td>
                                 <td><a href="javascript:;"><i class="fa fa-lg fa-trash"></i></a></td>
                             </tr>

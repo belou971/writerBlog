@@ -67,3 +67,7 @@ $app['dao.comment'] = function ($app) {
 $app['dao.subscriber'] = function ($app) {
     return new \writerBlog\DAO\SubscriberDAO($app['db']);
 };
+
+$app['dao.lazycaptcha'] = function () {
+    return new \writerBlog\DAO\LazyCAPTCHADAO();
+};

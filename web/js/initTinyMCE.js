@@ -2,12 +2,12 @@
  * Created by belou on 15/07/17.
  */
 tinymce.init({
-    selector: 'textarea#contentPost',
+    selector: 'textarea#content',
     height: 800,
     theme: 'modern',
     menubar:false,
     plugins: [
-        "advlist autolink link image lists preview hr visualblocks visualchars code fullpage",
+        "advlist autolink link image lists preview hr visualblocks visualchars code",
         "textcolor textcolor colorpicker textpattern wordcount spellchecker"
     ],
     toolbar1: 'formatselect  | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | forecolor backcolor | fontselect fontsizeselect spellchecker | hr | ' +

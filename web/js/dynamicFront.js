@@ -30,9 +30,42 @@ function changePostStatus($element, $url, $classToRemove, $classToAdd)
 
     $.post($url, {id: $post_id})
         .done(function(data) {
-        $element.removeClass($classToRemove).addClass($classToAdd);
+            $element.removeClass($classToRemove).addClass($classToAdd);
+            $('.unpublished').html(data.nbUnpublishedPost);
+            $('.published').html(data.nbPublishedPost);
     })
-    .fail(function(data){
-        alert("Oups! Une erreur s'est produite ... "+data.post_status);
-    });
 }
+
+function openModal(post_id, parent_id) {
+    $("#modal-comment").modal('show');
+}
+
+$('.comment-form-link').click(function(event) {
+    event.preventDefault();
+
+    var post_id = $(this).data("post-id"),
+        parent_id = $(this).data("parent-id");
+
+    openModal(post_id, parent_id);
+});
+
+$('.reply').click(function(event) {
+    var post_id = $(this).parent().data("post-id"),
+        id = $(this).parent().data("id");
+
+    $(".comment-form").find("input[name=pid]").val(id);
+
+    openModal(post_id, id);
+});
+
+$('.report').on('click', function(event){
+    var $report = $(this);
+    var id = $report.parent().data("id"),
+        url = "/comment/alert";
+
+    $.post(url, {"id": id})
+        .done(function(data) {
+            $report.parent().prepend('<i class="fa fa-flag-o"> Signalé</i>');
+            $report.remove();
+        });
+});

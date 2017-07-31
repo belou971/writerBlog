@@ -56,17 +56,6 @@ $(document).ready(function() {
                     }
                 }
             }
-        })
-        .on('success.form.bv', function(e) {
-            var $form        = $(e.target);     // Form instance
-
-            // Get the BootstrapValidator instance
-            var bv = $form.data('bootstrapValidator');
-
-            // Use Ajax to submit form data
-            $.post($form.attr('action'), $form.serialize(), function(result) {
-                console.log(result);
-            }, 'json');
         });
 });
 
@@ -86,13 +75,31 @@ function existCategory(label)
     return !bexist;
 }
 
+function existCategoryInDB($label, $url)
+{
+    $element = $('.personal_validation');
+    $.post($url, {'newCategory': $label})
+        .done(function ($data) {
+            if($data.cat_counter !== 0) {
+                $element.append($data.message);
+                $element.css('display', 'block');
+            } else {
+                $element.removeData().append($data.message);
+                $element.css('display', 'none');
+            }
+        })
+        .fail(function($data){
+            $element.append($data.message);
+            $element.css('display', 'block');
+        });
+}
+
 //Configuration of Bootstrap validator on div "divNewCat" with the addiction of a callback to check
 // whether the new category already exists
 $(document).ready(function() {
     $('#divNewCat').bootstrapValidator({
         button: {
             selector: '#addCategoryBtn'
-            /*disabled: 'disabled'*/
         },
         feedbackIcons: {
             valid: 'glyphicon glyphicon-ok',
@@ -119,24 +126,7 @@ $(document).ready(function() {
 
 //Change color state of status buttons on a click event associated to these buttons
 $('.btn-toggle').click(function() {
-
-    /*$(this).find('.btn').toggleClass('active');
-
-    if ($(this).find('.btn-success').length>0) {
-        $(this).find('.btn').toggleClass('btn-success');
-    }
-
-    $(this).find('.btn').toggleClass('btn-default');*/
     set_active_class($(this));
-});
-
-/*$('.btn-toggle').load(function() {
-    set_active_class($(this));
-});*/
-
-$('form').submit(function(){
-    alert($(this["options"]).val());
-    return false;
 });
 
 function set_active_class($element) {
@@ -149,3 +139,20 @@ function set_active_class($element) {
     $element.find('.btn').toggleClass('btn-default');
 }
 
+//
+$('#addCategoryBtn').click(function(event){
+    event.preventDefault();
+
+    //check whether the input of new category label is empty
+    var $inputNewCategory = $('#inputCategory').val();
+    if($inputNewCategory.length == 0) {
+        $('.personal_validation').removeData()
+            .append("Attention entrer un libellé")
+            .css('display', 'block');
+    }
+    else {
+        existCategoryInDB($inputNewCategory, "/admin/existCategory")
+    }
+        //existCategoryInDB($in$inputNewCategory);
+    //}
+});

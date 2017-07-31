@@ -237,14 +237,14 @@ footer {
     padding-bottom: 0;
 }
 
-.comment-form {
+/*.comment-form {
     background-color: #A2C4C9;
     width: 100%;
     padding-top: 20px;
-}
+}*/
 
 .comment-form h3 {
-    color: #fff;
+    color: #A2C4C9;
     margin-top: 0 !important;
     margin-bottom: 20px!important;
 }

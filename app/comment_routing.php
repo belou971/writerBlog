@@ -15,27 +15,27 @@ $app->get('/comment/{id}', function ($id) use($app) {
 
  $commentsTree = $app['dao.comment']->getCommentsByPostId($id);
 
-    var_dump($commentsTree);
-    //return $commentsTree;
     return "ok";
 });
 
-//Add a new comment on a post
-$app->post('/comment/add', function (Request $resquestForm) use($app) {
+//Open comment form on a post
+$app->post('/open_comment_form/', function(Request $request) use($app) {
+    $post_id = $request->get('post_id');
+    $parent_id = $request->get('parent_id');
 
-    $count = $app['dao.comment']->createComment($resquestForm);
+    $html = $app['dao.comment']->getForm($post_id, $parent_id);
 
-    $msg = $count.' row(s) added!\n';
-
-    if($count > 0) {
-        $response = new Response($msg, 201);
-    }
-    else {
-        $response = new Response($msg, 404);
-    }
-    return $response;
-
+    return new Response($html);
 });
+
+//Add a new comment on a post
+$app->post('/comment/add', function (Request $requestForm) use($app) {
+
+    $data = $app['dao.comment']->createComment($requestForm);
+
+    return $app->redirect($app->path('post', array('id' => $data['post_id'])));
+
+})->bind('add_comment');
 
 //Reply to a comment on a post
 $app->get('/comment_{id}/reply', function ($id) use($app) {
@@ -45,28 +45,17 @@ $app->get('/comment_{id}/reply', function ($id) use($app) {
     $message="Comment found!!";
     if(is_null($commentToReply)) {$message="Comment not found!!";}
 
-    var_dump($commentToReply);
-
-    //TODO:set the comment form to reply from commentToReply as parent id and post id
-
     return $message;
 });
 
 //Make an alert on a comment
-$app->post('/comment/alert', function (Request $resquestForm) use($app) {
+$app->post('/comment/alert', function (Request $requestForm) use($app) {
 
-    $count = $app['dao.comment']->alertComment($resquestForm);
+    $count = $app['dao.comment']->alertComment($requestForm);
 
     $msg = $count.' row(s) updated!\n';
 
-    if($count > 0) {
-        $response = new Response($msg, 201);
-    }
-    else {
-        $response = new Response($msg, 404);
-    }
-
-    //TODO:set the comment form to  from comment to alert as parent id and post id
+    $response = new Response($msg);
 
     return $response;
 });

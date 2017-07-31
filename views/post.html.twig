@@ -2,96 +2,65 @@
 
 {% block title %}{{ post.getSTitle }}{% endblock %}
 
+{% block js %}
+    <!-- Personal JavaScript -->
+    <script src="{{ asset('/js/dynamicFront.js') }}"></script>
+{% endblock %}
+
 {% block content %}
     {% include 'sections/post_header.thml.twig' %}
 
-    <div class="post-content">
-        {{ post.getSContent }}
-    </div>
-    <!-- Social block -->
-    <div class="social">
-        <ul class="list-inline text-center">
-            <li>
-                <a href="#">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-heart fa-stack-1x fa-inverse"></i>
-                            </span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-                            </span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                            </span>
-                </a>
-            </li>
-            <li>
-                <a href="#">
-                            <span class="fa-stack fa-lg">
-                                <i class="fa fa-circle fa-stack-2x"></i>
-                                <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
-                            </span>
-                </a>
-            </li>
-        </ul>
+    <div class="post-content" xmlns="http://www.w3.org/1999/html">
+        {{ post.getSContent|raw }}
     </div>
 
-    <div class="row">
-        <div class="comment-form text-center col-md-12">
-            <h3>Laissez un message</h3>
-            <form>
-                <div class="row">
-                    <div class="form-suivre col-md-12">
-                        <div class="form-group">
-                            <label class="sr-only" for="inputMessage">Name</label>
-                            <textarea class="form-control" id="inputMessage" placeholder="Votre message" rows="4"></textarea>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="form-suivre col-md-6 ">
-                        <div class="form-group">
-                            <label class="sr-only" for="inputName">Name</label>
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-user fa-fw"></i></span>
-                                <input type="text" class="form-control" id="inputName" placeholder="Votre nom">
+    {% include 'sections/modal-comment-form.html' %}
+
+    <!--
+    <div class="row "></div>
+    -->
+
+    <div class="comments-boxes row">
+        {% if comments|length > 0 %}
+            <ul class="comment-tree">
+                {% for nodes in comments %}
+                    {% set comment = nodes['comment'] %}
+                    {% set level = nodes['level'] %}
+                    {% set levelClass = "comment-level"~ level %}
+                    {% set branch = "branch-level" ~ level %}
+                    {% set offset = (level == 0)?"":"col-sm-offset-" ~ level %}
+                    {% set gridValue = (level == 0)?"col-sm-12":"" %}
+                    {% set gridValue = (level == 1)?"col-sm-11":gridValue %}
+                    {% set gridValue = (level == 2)?"col-sm-10":gridValue %}
+                    <li class="{{ levelClass }} row">
+                        <div class="comment {{ branch }} {{ offset }} {{  gridValue }}">
+                            <div class="panel panel-comment">
+                                <div class="panel-heading">
+                                    <div class="row">
+                                        <div class="col-lg-10 text-left">
+                                            <span class="font-pseudo">{{ comment.getPseudo }}  </span>
+                                            <span class="">{{ comment.getCreationDate }}</span>
+                                        </div>
+                                        {% if level < 2 %}
+                                        <div class="col-lg-2 text-right"  data-post-id="{{ comment.getPostId }}" data-id="{{ comment.getId }}">
+                                            {% if comment.getStatus == "published" %}
+                                            <i class="fa fa-flag report"></i>
+                                            {% else %}
+                                            <i class="fa fa-flag-o"> Signalé</i>
+                                            {% endif %}
+                                            <i class="fa fa-reply reply"></i>
+                                        </div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="panel-body">
+                                    {{ comment.getMessage }}
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="form-suivre col-md-6">
-                        <div class="form-group">
-                            <label class="sr-only" for="inputEmail">Email</label>
-                            <div class="input-group">
-                                <span class="input-group-addon"><i class="fa fa-envelope fa-fw"></i></span>
-                                <input type="email" class="form-control" id="inputEmail" placeholder="Votre e-mail">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-12">
-
-                    </div>
-                </div>
-                <div class="row">
-                    <div class=" form-suivre col-md-12">
-                        <button type="submit" class="btn btn-primary">Valider</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
     </div>
-
-    <div class="comment-boxes"></div>
 {% endblock %}

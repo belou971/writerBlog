@@ -30,77 +30,87 @@ $app->get('/post/{id}', function ($id) use ($app) {
     $blogInfo = $app['dao.blog']->find();
     $categories = $app['dao.category']->findAll();
     $author = $app['dao.admin']->get();
+    $comments = $app['dao.comment']->getCommentsByPostId($id);
 
     return $app['twig']->render('post.html.twig', array('post' => $post,
                                                         'blog' => $blogInfo,
                                                   'categories' => $categories,
-                                                      'author' => $author));
+                                                      'author' => $author,
+                                                'comments'=>$comments));
 })->bind('post');
 
 //Create a new post
-$app->post('/create_post', function (Request $request) use($app) {
-    $author = $app['dao.admin']->get();
-    $countRow = $app['dao.post']->createPost($request, $author);
-    $msg = $countRow.' row(s) added!\n';
+$app->post('/admin/create_post', function (Request $request) use($app) {
+    $data = array('nb_row' => 0, 'post_id' => 0);
+    $token = $app['security.token_storage']->getToken();
+    if(is_null($token) || is_null($token->getUser())) {
+        return $app->redirect($app->path('admin_home'));
+    }
 
-    if($countRow > 0) {
-        $response = new Response($msg, 201);
+    $user = $token->getUser();
+    $data = $app['dao.post']->createPost($request, $user->getId());
+
+    if($data['nb_row'] > 0){
+        return $app->redirect($app->path('edit_post_form',array('id'=> $data['post_id'])));
     }
-    else {
-        $response = new Response($msg, 404);
-    }
-    return $response;
-});
+
+    return $app->redirect($app->path('admin_home'));
+
+})->bind('create_post');
 
 //Edit a post by its id
-$app->post('/update', function (Request $request) use($app) {
-    $countRow = $app['dao.post']->updatePost($request);
-
-    $msg = $countRow.' row(s) updated!\n';
-
-    if($countRow > 0) {
-        $response = new Response($msg, 201);
+$app->post('/admin/update', function (Request $request) use($app) {
+    //$data = array('nb_row' => 0, 'post_id' => 0);
+    $token = $app['security.token_storage']->getToken();
+    if(is_null($token) || is_null($token->getUser())) {
+        return $app->redirect($app->path('admin_home'));
     }
-    else {
-        $response = new Response($msg, 404);
-    }
-    return $response;
-});
+
+
+    $app['dao.post']->updatePost($request);
+
+    return $app->redirect($app->path('admin_home'));
+
+})->bind('update_post');
 
 //Path to publish a post by Id
-$app->post('/publish/', function (Request $request) use($app) {
-    $count = $app['dao.post']->publishPost($request->get('id'));
-    $post = $app['dao.post']->getPost($request->get('id'));
-    $data = array('post_status' => "");
+$app->post('/admin/publish/', function (Request $request) use($app) {
+    $token = $app['security.token_storage']->getToken();
 
-    if($count > 0) {
-        $data = array('post_status' => $post->getEStatus());
-        return $app->json($data, 201);
+    $data = array('post_status' => "", 'nbPublishedPost' => 0, 'nbUnpublishedPos' => 0);
+    if(is_null($token) || is_null($token->getUser())) {
+        return $app->json($data);
     }
-    else {
-        return $app->json($data, 404);
-    }
+
+    $data['post_status']       = $app['dao.post']->publishPost($request->get('id'));
+    $user                      = $token->getUser();
+    $data['nbPublishedPost']   = $app['dao.post']->getNumberOfPublishedPost($user->getUsername());
+    $data['nbUnpublishedPost'] = $app['dao.post']->getNumberOfUnpublishedPost($user->getUsername());
+
+    return $app->json($data);
 
 })->bind('published_post');
 
 //Path to hide a post by Id
-$app->post('/hide/', function (Request $request) use($app) {
+$app->post('/admin/hide/', function (Request $request) use($app) {
+    $token = $app['security.token_storage']->getToken();
 
-    $count = $app['dao.post']->hidePost($request->get('id'));
-    $post = $app['dao.post']->getPost($request->get('id'));
-    $data = array('post_status' => "");
+    $data = array('post_status' => "", 'nbPublishedPost' => 0, 'nbUnpublishedPos' => 0);
+    if(is_null($token) || is_null($token->getUser())) {
+        return $app->json($data);
+    }
 
-    if($count > 0) {
-        $data = array('post_status' => $post->getEStatus());
-        return $app->json($data, 201);
-    }
-    else {
-        return $app->json($data, 404);
-    }
+    $data['post_status']       = $app['dao.post']->hidePost($request->get('id'));
+    $user                      = $token->getUser();
+    $data['nbPublishedPost']   = $app['dao.post']->getNumberOfPublishedPost($user->getUsername());
+    $data['nbUnpublishedPost'] = $app['dao.post']->getNumberOfUnpublishedPost($user->getUsername());
+
+    return $app->json($data);
+
 })->bind('hidden_post');
 
 //Delete a post identified by its Id
-$app->get('/del/post/{id}', function ($id) use($app) {
+$app->get('/admin/del/post/{id}', function ($id) use($app) {
    $countDeletion = $app['dao.post']->deletePost($id);
 
     return $countDeletion;
