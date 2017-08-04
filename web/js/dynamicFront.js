@@ -40,7 +40,7 @@ function openModal(post_id, parent_id) {
     $("#modal-comment").modal('show');
 }
 
-$('.comment-form-link').click(function(event) {
+$('.comment-form-link').on('click', function(event) {
     event.preventDefault();
 
     var post_id = $(this).data("post-id"),
@@ -49,14 +49,17 @@ $('.comment-form-link').click(function(event) {
     openModal(post_id, parent_id);
 });
 
-$('.reply').click(function(event) {
+$('.reply').on('click', function(event) {
     var post_id = $(this).parent().data("post-id"),
         id = $(this).parent().data("id");
 
     $(".comment-form").find("input[name=pid]").val(id);
+    $(".comment-form").find("input[name=post_id]").val(post_id);
+    $("#message").val('');
 
     openModal(post_id, id);
 });
+
 
 $('.report').on('click', function(){
     var $report = $(this);
@@ -70,6 +73,53 @@ $('.report').on('click', function(){
         });
 });
 
+$('.msg-delete').on('click', function(){
+    var comment_id = $(this).parent().data("id"),
+        dialog_confirm = $('.dialog-confirmation'),
+        button_confirm = dialog_confirm.find('.btn-confirm');
+
+        button_confirm.data('id', comment_id);
+
+        dialog_confirm.find('.modal-title').html("Confirmer la suppression");
+        dialog_confirm.find('.dialog-content').html('Attention, vous allez supprimer définitivement ce commentaire.<br/>' +
+            'Voulez-vous vraiment le faire?');
+
+    dialog_confirm.modal('show');
+});
+
+function doRefresh(id, url)
+{
+    var commentRow = $('.comment-contain-footer[data-id=' + id + ']').closest(".one-comment-row");
+
+    $.post(url, {"id": id})
+        .done(function(data) {
+            if(data.id == id) {
+                commentRow.remove();
+            }
+        });
+}
+
+$('.dialog-confirmation .btn-confirm').on('click', function(){
+    var id = $(this).data("id"),
+        url = "/admin/comment/delete",
+        commentRow = $('.comment-contain-footer[data-id=' + id + ']').closest(".one-comment-row");
+
+    $.post(url, {"id": id})
+        .done(function(data) {
+            if(data.id == id) {
+                commentRow.remove();
+            }
+        });
+
+    $('.dialog-confirmation').modal('hide');
+});
+
+$('.mark-read').on('click', function(){
+    var id = $(this).parent().data("id"),
+        url = "/admin/comment/read";
+
+    doRefresh(id, url);
+});
 
 function doCollaspe(root, body, classToShow, classToHide)
 {

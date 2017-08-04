@@ -110,7 +110,7 @@ CREATE TABLE t_comment (
   com_id            BIGINT(10)                                                  NOT NULL PRIMARY KEY AUTO_INCREMENT,
   com_post_id      BIGINT(10)                                                  NOT NULL,
   com_parent_id     BIGINT(10),
-  com_pseudo        VARCHAR(10)                                                 NOT NULL,
+  com_pseudo        VARCHAR(20)                                                 NOT NULL,
   com_email         VARCHAR(40)                                                 NOT NULL,
   com_status        ENUM('published', 'not_published', 'malicious', 'disabled') NOT NULL,
   com_date_creation DATETIME                                                    NOT NULL,

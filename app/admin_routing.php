@@ -143,3 +143,45 @@ $app->get('/admin/comments-overview', function() use ($app) {
                                                                 'newComments' => $newCommentList));
 
 })->bind('comments-overview');
+
+//Administration: admin can reply to a comment
+//Add a new comment on a post
+$app->post('/admin/comment/add', function (Request $requestForm) use($app) {
+    $token = $app['security.token_storage']->getToken();
+
+    if(is_null($token)) {
+        return NULL;
+    }
+
+    $user = $token->getUser();
+    var_dump($user);
+
+    $requestForm->attributes->set('email', $user->getEmail());
+    $requestForm->attributes->set('name', $user->getWebName());
+    $data = $app['dao.comment']->createComment($requestForm);
+
+    if($data['parent_id'] > 0) {
+        $app['dao.comment']->markAsRead($data['parent_id']);
+    }
+
+    $blogInfo = $app['dao.blog']->find();
+    $newCommentList = $app['dao.comment']->findNewComments($user->getWebName());
+
+    return $app->redirect($app->path('comments-overview', array('blog' => $blogInfo, 'newComments' => $newCommentList)));
+    //return $app->json($data);
+
+})->bind('admin_add_comment');
+
+//Administration: delete an comment by the admin
+$app->post('/admin/comment/delete', function (Request $requestForm) use($app) {
+    $data = $app['dao.comment']->deleteComment($requestForm->get('id'));
+
+    return $app->json($data);
+
+})->bind('admin_delete_comment');
+
+$app->post('/admin/comment/read', function(Request $requestForm) use($app) {
+    $data = $app['dao.comment']->markAsRead($requestForm->get('id'));
+
+    return $app->json($data);
+})->bind('admin_mark_comment');

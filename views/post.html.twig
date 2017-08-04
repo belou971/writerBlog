@@ -14,11 +14,30 @@
         {{ post.getSContent|raw }}
     </div>
 
-    {% include 'sections/modal-comment-form.html' %}
+    <div class="row comment-link">
+        <div class="col-lg-push-2 col-lg-9">
+            <div class="panel panel-info">
+                <div class="panel-body comment-form-link" data-post-id="{{ post.getIId }}" data-parent-id="-1">
+                    <div class="row">
+                        <div class="col-xs-4 text-center">
+                            <i class="fa fa-empire"></i>
+                            <i class="fa fa-empire"></i>
+                        </div>
+                        <div class="col-xs-4 text-right">
+                            Laissez un commentaire
+                        </div>
+                        <div class="col-xs-4 text-center">
+                            <i class="fa fa-empire"></i>
+                            <i class="fa fa-empire"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-    <!--
-    <div class="row "></div>
-    -->
+        </div>
+    </div>
+    <!-- /.row -->
+    {% include 'sections/modal-comment-form.html.twig' %}
 
     <div class="comments-boxes row">
         {% if comments|length > 0 %}

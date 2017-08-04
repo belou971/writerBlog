@@ -38,10 +38,10 @@
                         {% for element in commentList %}
                             {% set comment = element['comment'] %}
                             {% set hasPPID = (element['ppid']|length>0) %}
-                        <li class="row">
+                        <li class="row one-comment-row">
                             <div class="comment col-sm-12">
-                                <div class="panel panel-default comment-contain">
-                                    <div class="panel-heading">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading comment-contain">
                                         <div class="row">
                                             <div class="col-sm-11 col-xs-11 text-left">
                                                 <h5 class="text-info">Posté par <span class="text-success">{{ comment.getPseudo }}</span> le <span class="text-success">{{ comment.getCreationDate }}</span></h5>
@@ -54,12 +54,12 @@
                                     <div class="panel-body comment-contain-body" style="display: none">
                                         {{ comment.getMessage }}
 
-                                        <div class="comment-contain-footer">
+                                        <div class="comment-contain-footer" data-post-id="{{ comment.getPostId }}" data-id="{{ comment.getId }}">
                                             {% if hasPPID == false %}
-                                            <button type="button" class="btn btn-link"><i class="fa fa-lg fa-mail-reply"></i> Répondre à <span class="text-success">{{ comment.getPseudo }}</span></button>
+                                            <button type="button" class="btn btn-link reply"><i class="fa fa-lg fa-reply"></i> Répondre à <span class="text-success">{{ comment.getPseudo }}</span></button>
                                             {% endif %}
-                                            <button type="button" class="btn btn-link"><i class="fa fa-lg fa-trash"></i> Supprimer</button>
-                                            <button type="button" class="btn btn-link"><i class="fa fa-lg fa-check-square-o"></i> Marquer comme lu</button>
+                                            <button type="button" class="btn btn-link msg-delete"><i class="fa fa-lg fa-trash"></i> Supprimer</button>
+                                            <button type="button" class="btn btn-link mark-read"><i class="fa fa-lg fa-check-square-o"></i> Marquer comme lu</button>
                                         </div>
                                     </div>
                                 </div>
@@ -71,8 +71,11 @@
             </div>
         </div>
         <!-- /.row -->
-
     </div>
         {% endfor %}
     {% endif %}
+
+    {% include 'sections/modal-comment-form.html.twig' %}
+
+    {% include 'sections/modal_confirmation.html.twig' %}
 {% endblock %}

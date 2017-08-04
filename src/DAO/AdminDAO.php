@@ -51,6 +51,7 @@ class AdminDAO extends Dao implements UserProviderInterface
         $admin->setRole($row['adm_role']);
         $admin->setPassword($row['adm_pwd']);
         $admin->setSalt($row['adm_salt']);
+        $admin->setEmail($row['adm_email']);
 
         return $admin;
     }

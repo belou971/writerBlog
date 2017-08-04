@@ -251,7 +251,14 @@ namespace writerBlog\DAO;
          */
         public function deleteComment($id)
         {
-            return $this->updateCommentStatus($id, EPostStatus::DISABLED);
+            $data['id'] = "";
+
+            if($this->updateCommentStatus($id, EPostStatus::DISABLED) > 0)
+            {
+                $data['id'] = $id;
+            }
+
+            return $data;
         }
 
         public function alertComment(Request $requestForm)
@@ -262,12 +269,26 @@ namespace writerBlog\DAO;
 
         public function markAsRead($id)
         {
-            return $this->updateCommentRead($id, ECommentRead::READ);
+            $data['id'] = "";
+
+            if($this->updateCommentRead($id, ECommentRead::READ) > 0)
+            {
+                $data['id'] = $id;
+            }
+
+            return $data;
         }
 
         public function markAsUnread($id)
         {
-            return $this->updateCommentRead($id, ECommentRead::NOT_READ);
+            $data['id'] = "";
+
+            if($this->updateCommentRead($id, ECommentRead::NOT_READ) > 0)
+            {
+                $data['id'] = $id;
+            }
+
+            return $data;
         }
 
         private function updateCommentStatus($id, $new_status)
@@ -336,6 +357,7 @@ namespace writerBlog\DAO;
 
             if(is_int($result) and $result> 0){
                 $responseData['nb_row'] = $result;
+                $responseData['parent_id'] = $comment->getParentId();
                 $responseData['comment_id'] = $queryBuilder->getConnection()->lastInsertId();
             }
 
