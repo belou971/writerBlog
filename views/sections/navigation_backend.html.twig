@@ -49,8 +49,8 @@
                     </li>
                 </ul>
             </li>
-            <li {{ currentPath == "#"? active}}>
-                <a href="#"><i class="fa fa-fw fa-envelope-o"></i> Messages</a>
+            <li {{ currentPath == "comments-overview"? active}}>
+                <a href="{{ path('comments-overview') }}"><i class="fa fa-fw fa-envelope-o"></i> Messages</a>
             </li>
             <li {{ currentPath == "#"? active}}>
                 <a href="#"><i class="fa fa-fw fa-picture-o"></i> Images</a>

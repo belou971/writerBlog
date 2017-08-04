@@ -9,6 +9,7 @@
 
 namespace writerBlog\DAO;
 
+    use writerBlog\Domain\CommentGroup;
     use writerBlog\Domain\LazyCaptcha;
     use writerBlog\DAO\Dao;
     use Doctrine\DBAL\Connection;
@@ -20,6 +21,58 @@ namespace writerBlog\DAO;
 
     class CommentDAO extends Dao
     {
+
+        public function findNewComments($username)
+        {
+            $resultData = array();
+
+            $queryBuilder = $this->getDB()->createQueryBuilder();
+            $queryBuilder->select('c.com_post_id', 'p.post_title', 'c.com_id', 'c.com_parent_id', 'c.com_pseudo', 'c.com_email','c.com_date_creation', 'c.com_message', 'c.com_status', 'c.com_read')
+                ->addSelect('cc.com_parent_id AS ppid')
+                ->from('t_comment', 'c')
+                ->innerJoin('c', 't_post', 'p', 'c.com_post_id = p.post_id')
+                ->leftJoin('c', 't_comment', 'cc', 'c.com_parent_id = cc.com_id')
+                ->where('p.post_status = ?')
+                ->andwhere('c.com_read = ?')
+                ->andWhere('c.com_status = ?')
+                ->andWhere('c.com_pseudo <> ?')
+                ->orderBy('c.com_post_id', 'ASC')
+                ->addOrderBy('c.com_date_creation', 'ASC')
+                ->setParameter(0, EPostStatus::PUBLISHED)
+                ->setParameter(1, ECommentRead::NOT_READ)
+                ->setParameter(2, ECommentStatus::PUBLISHED)
+                ->setParameter(3, $username);
+
+            $statement = $queryBuilder->execute();
+            if(is_int($statement)) {
+                return null;
+            }
+
+            $resultsRow = $statement->fetchAll();
+            if(!is_array($resultsRow)) {
+                return $resultData;
+            }
+
+            $current_post_id = -1;
+            $position = -1;
+            foreach($resultsRow as $row) {
+                if($current_post_id != $row['com_post_id']) {
+                    $comment_group = $this->buildCommentGroup($row);
+                    $current_post_id = $row['com_post_id'];
+                    $position = $position + 1;
+                    $resultData[$position] = $comment_group;
+                }
+                else {
+                    $data['comment'] = $this->buildDomainObject($row);
+                    $data['ppid']    = $row['ppid'];
+                    $resultData[$position]->appendInCommentList($data);
+                }
+            }
+
+            return $resultData;
+        }
+
+
         /**
          * @param int $id Takes the comment Id in parameter
          * @return null|Comment Gets the Comment Object corresponding to the given Id
@@ -312,6 +365,20 @@ namespace writerBlog\DAO;
             }
 
             return $comment;
+        }
+
+        private function buildCommentGroup($row)
+        {
+            $commentGroup    = new CommentGroup($row['com_post_id'], $row['post_title']);
+
+            $comment         = $this->buildDomainObject($row);
+
+            $data['comment'] = $comment;
+            $data['ppid']    = $row['ppid'];
+
+            $commentGroup->appendInCommentList($data);
+
+            return $commentGroup;
         }
 
         /**

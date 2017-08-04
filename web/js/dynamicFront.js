@@ -58,7 +58,7 @@ $('.reply').click(function(event) {
     openModal(post_id, id);
 });
 
-$('.report').on('click', function(event){
+$('.report').on('click', function(){
     var $report = $(this);
     var id = $report.parent().data("id"),
         url = "/comment/alert";
@@ -68,4 +68,39 @@ $('.report').on('click', function(event){
             $report.parent().prepend('<i class="fa fa-flag-o"> Signalé</i>');
             $report.remove();
         });
+});
+
+
+function doCollaspe(root, body, classToShow, classToHide)
+{
+    var iconElement = '';
+
+    if(root.find('.fa-chevron-down').length > 0) {
+        body.show();
+
+        iconElement = root.find('.fa-chevron-down');
+        iconElement.removeClass(classToShow).addClass(classToHide);
+    }
+    else if(root.find('.fa-chevron-up').length > 0) {
+        body.hide();
+
+        iconElement = root.find('.fa-chevron-up');
+        iconElement.removeClass(classToHide).addClass(classToShow);
+    }
+}
+
+$('.comment-group').on('click', function(){
+    var classToHide = 'fa fa-chevron-up fa-2x',
+        classToShow = 'fa fa-chevron-down fa-2x',
+        bodyElement = $(this).parent().find(".comment-group-body");
+
+    doCollaspe($(this), bodyElement, classToShow, classToHide);
+});
+
+$('.comment-contain').on('click', function() {
+    var classToHide = 'fa fa-chevron-up',
+        classToShow = 'fa fa-chevron-down',
+        bodyElements = $(this).parent().find(".comment-contain-body");
+
+    doCollaspe($(this), bodyElements, classToShow, classToHide);
 });

@@ -214,10 +214,6 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #e5f2f7!important;
 }
 
-/*.table-hover>tbody>tr>td {
-   text-align: center;
-}*/
-
 /* ---- Panels ---- */
 .panel-green > .panel-heading {
     border-color: #5cb85c;
@@ -335,4 +331,19 @@ tr a .fa-lg:hover {
 .input-group-addon {
     color: #eee !important;
     background-color: #7f9ad1;
+}
+
+.comment-list {
+    list-style-type: none;
+    padding: 0;
+}
+
+.comment-contain-body {
+    padding-bottom: 0!important;
+}
+
+.comment-contain-footer {
+    width: 100%;
+    border-top: 1px solid #ccc;
+    margin-top: 15px;
 }

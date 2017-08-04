@@ -125,3 +125,21 @@ $app->post('/admin/existCategory', function(Request $request) use ($app) {
 
     return $response;
 })->bind('existCategory');
+
+//Administration: new comments page in admin side
+$app->get('/admin/comments-overview', function() use ($app) {
+
+    $blogInfo = $app['dao.blog']->find();
+    $token    = $app['security.token_storage']->getToken();
+
+    if(is_null($token)) {
+        return NULL;
+    }
+
+    $user = $token->getUser();
+    $newCommentList = $app['dao.comment']->findNewComments($user->getWebName());
+
+    return $app['twig']->render('comment-view.html.twig', array('blog'  => $blogInfo,
+                                                                'newComments' => $newCommentList));
+
+})->bind('comments-overview');
