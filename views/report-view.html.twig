@@ -1,6 +1,6 @@
 {% extends 'base-backend.html.twig' %}
 
-{% block title %}Messages{% endblock %}
+{% block title %}Signalement{% endblock %}
 
 {% block css %}
     <!-- Bootstrap Core CSS -->
@@ -15,17 +15,17 @@
     <script src="{{ asset('/js/dynamicFront.js') }}"></script>
 {% endblock %}
 
-{% block pageHeader %}Nouveaux commentaires{% endblock %}
+{% block pageHeader %}Commentaires signalés{% endblock %}
 
 {% block pageContent %}
-    {% if newComments|length > 0 %}
-        {% for commentGroup in newComments %}
+    {% if reportedComments|length > 0 %}
+        {% for commentGroup in reportedComments %}
             {% set post_title = commentGroup.getPostTitle %}
             {% set commentList = commentGroup.getCommentList %}
             {% set nbComment = commentList|length %}
     <div class="row one-post-row">
         <div class="col-lg-offset-1 col-lg-10 col-lg-offset-1 col-md-12">
-            <div class="panel panel-info">
+            <div class="panel panel-black">
                 <div class="panel-heading comment-group">
                     <div class="row">
                         <div class="col-sm-1 col-xs-1 text-center"><i class="fa fa-chevron-down fa-2x"></i></div>
@@ -54,12 +54,9 @@
                                     <div class="panel-body comment-contain-body" style="display: none">
                                         {{ comment.getMessage }}
 
-                                        <div class="comment-contain-footer" data-post-id="{{ comment.getPostId }}" data-id="{{ comment.getId }}">
-                                            {% if hasPPID == false %}
-                                            <button type="button" class="btn btn-link reply"><i class="fa fa-lg fa-reply"></i> Répondre à <span class="text-success">{{ comment.getPseudo }}</span></button>
-                                            {% endif %}
+                                        <div class="comment-contain-footer" data-id="{{ comment.getId }}">
+                                            <button type="button" class="btn btn-link mark-published"><i class="fa fa-lg fa-eye"></i> Publier</button>
                                             <button type="button" class="btn btn-link msg-delete"><i class="fa fa-lg fa-trash"></i> Supprimer</button>
-                                            <button type="button" class="btn btn-link mark-read"><i class="fa fa-lg fa-check-square-o"></i> Marquer comme lu</button>
                                         </div>
                                     </div>
                                 </div>
@@ -74,8 +71,6 @@
     </div>
         {% endfor %}
     {% endif %}
-
-    {% include 'sections/modal-comment-form.html.twig' %}
 
     {% include 'sections/modal_confirmation.html.twig' %}
 {% endblock %}

@@ -89,29 +89,35 @@ $('.msg-delete').on('click', function(){
 
 function doRefresh(id, url)
 {
-    var commentRow = $('.comment-contain-footer[data-id=' + id + ']').closest(".one-comment-row");
+    var commentRow = $('.comment-contain-footer[data-id=' + id + ']').closest('.one-comment-row'),
+        commentList = commentRow.closest('.comment-list');
 
     $.post(url, {"id": id})
         .done(function(data) {
             if(data.id == id) {
                 commentRow.remove();
+
+                if(commentList.find('.one-comment-row').length == 0) {
+                    commentList.closest('.one-post-row').remove();
+                }
             }
         });
 }
 
 $('.dialog-confirmation .btn-confirm').on('click', function(){
     var id = $(this).data("id"),
-        url = "/admin/comment/delete",
-        commentRow = $('.comment-contain-footer[data-id=' + id + ']').closest(".one-comment-row");
+        url = "/admin/comment/delete";
 
-    $.post(url, {"id": id})
-        .done(function(data) {
-            if(data.id == id) {
-                commentRow.remove();
-            }
-        });
+    doRefresh(id, url);
 
     $('.dialog-confirmation').modal('hide');
+});
+
+$('.mark-published').on('click', function(){
+    var id = $(this).parent().data("id"),
+        url = "/admin/comment/publish";
+
+    doRefresh(id, url);
 });
 
 $('.mark-read').on('click', function(){

@@ -144,6 +144,16 @@ $app->get('/admin/comments-overview', function() use ($app) {
 
 })->bind('comments-overview');
 
+//Administration:
+$app->get('/admin/comment/report-view', function () use($app) {
+
+    $blogInfo = $app['dao.blog']->find();
+    $reportCommentList = $app['dao.comment']->findReportedComments();
+
+    return $app['twig']->render('report-view.html.twig', array('blog'  => $blogInfo,
+                                                               'reportedComments' => $reportCommentList));
+})->bind('report_view');
+
 //Administration: admin can reply to a comment
 //Add a new comment on a post
 $app->post('/admin/comment/add', function (Request $requestForm) use($app) {
@@ -180,8 +190,16 @@ $app->post('/admin/comment/delete', function (Request $requestForm) use($app) {
 
 })->bind('admin_delete_comment');
 
+//Administration: Mark a comment as read
 $app->post('/admin/comment/read', function(Request $requestForm) use($app) {
     $data = $app['dao.comment']->markAsRead($requestForm->get('id'));
 
     return $app->json($data);
 })->bind('admin_mark_comment');
+
+//Administration: Approuve a reported comment
+$app->post('/admin/comment/publish', function(Request $requestForm) use($app) {
+    $data = $app['dao.comment']->publishComment($requestForm->get('id'));
+
+    return $app->json($data);
+})->bind('admin_publish_comment');

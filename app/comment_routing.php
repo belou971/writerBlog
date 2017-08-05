@@ -48,7 +48,7 @@ $app->get('/comment_{id}/reply', function ($id) use($app) {
     return $message;
 });
 
-//Make an alert on a comment
+//Sent an alert about a comment
 $app->post('/comment/alert', function (Request $requestForm) use($app) {
 
     $count = $app['dao.comment']->alertComment($requestForm);

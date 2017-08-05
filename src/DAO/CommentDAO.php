@@ -21,11 +21,36 @@ namespace writerBlog\DAO;
 
     class CommentDAO extends Dao
     {
+        public function findReportedComments()
+        {
+            $queryBuilder = $this->getDB()->createQueryBuilder();
+            $queryBuilder->select('c.com_post_id', 'p.post_title', 'c.com_id', 'c.com_parent_id', 'c.com_pseudo', 'c.com_email','c.com_date_creation', 'c.com_message', 'c.com_status', 'c.com_read')
+                ->addSelect('cc.com_parent_id AS ppid')
+                ->from('t_comment', 'c')
+                ->innerJoin('c', 't_post', 'p', 'c.com_post_id = p.post_id')
+                ->leftJoin('c', 't_comment', 'cc', 'c.com_parent_id = cc.com_id')
+                ->where('c.com_status = ?')
+                ->andwhere('p.post_status = ?')
+                ->orderBy('c.com_post_id', 'ASC')
+                ->addOrderBy('c.com_date_creation', 'ASC')
+                ->setParameter(0, ECommentStatus::MALICIOUS)
+                ->setParameter(1, EPostStatus::PUBLISHED);
+
+            $statement = $queryBuilder->execute();
+            if(is_int($statement)) {
+                return null;
+            }
+
+            $resultsRow = $statement->fetchAll();
+            if(!is_array($resultsRow)) {
+                return array();
+            }
+
+            return $this->extractData($resultsRow);
+        }
 
         public function findNewComments($username)
         {
-            $resultData = array();
-
             $queryBuilder = $this->getDB()->createQueryBuilder();
             $queryBuilder->select('c.com_post_id', 'p.post_title', 'c.com_id', 'c.com_parent_id', 'c.com_pseudo', 'c.com_email','c.com_date_creation', 'c.com_message', 'c.com_status', 'c.com_read')
                 ->addSelect('cc.com_parent_id AS ppid')
@@ -50,12 +75,20 @@ namespace writerBlog\DAO;
 
             $resultsRow = $statement->fetchAll();
             if(!is_array($resultsRow)) {
-                return $resultData;
+                return array();
             }
+
+            return $this->extractData($resultsRow);
+        }
+
+        private function extractData($sqlResults)
+        {
+            $resultData = array();
 
             $current_post_id = -1;
             $position = -1;
-            foreach($resultsRow as $row) {
+
+            foreach($sqlResults as $row) {
                 if($current_post_id != $row['com_post_id']) {
                     $comment_group = $this->buildCommentGroup($row);
                     $current_post_id = $row['com_post_id'];
@@ -224,7 +257,14 @@ namespace writerBlog\DAO;
 
         public function publishComment($id)
         {
-            return $this->updateCommentStatus($id, ECommentStatus::PUBLISHED);
+            $data['id'] = "";
+
+            if($this->updateCommentStatus($id, ECommentStatus::PUBLISHED) > 0)
+            {
+                $data['id'] = $id;
+            }
+
+            return $data;
         }
 
         public function hideComment($id)
