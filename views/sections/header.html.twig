@@ -1,11 +1,11 @@
 <!-- Page Header -->
 <!-- Set your background image for this header on the line below. -->
-<header class="intro-header" style="background-image: url('/img/header-bg.jpg')">
+<header class="intro-header">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 <div class="site-heading">
-                    <h1>{{ blog.getSTitle }}</h1>
+                    <a class="title" href="{{ path('home') }}"><h1>{{ blog.getSTitle }}</h1></a>
                 </div>
             </div>
         </div>
@@ -13,38 +13,36 @@
 </header>
 
 <!-- Navigation -->
+<!--
 <div id="my-sticky">
     <nav class="navbar navbar-default">
-        <div class="container-fluid text-center">
+        <div class="container-fluid">
+-->
             <!-- Brand and toggle get grouped for better mobile display -->
+<!--
             <div class="navbar-header page-scroll">
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
                     <span class="sr-only">Toggle navigation</span>
-                    Menu <i class="fa fa-bars"></i>
+                    <i class="fa fa-bars"></i>
                 </button>
-                <a class="navbar-brand hidden-md hidden-lg hidden-md hidden-sm hidden-xs" href="{{ path('home') }}">Start Bootstrap</a>
+                <a class="navbar-brand my-brand" href="{{ path('home') }}" style="display: none">ma Jolie Plume</a>
             </div>
+-->
 
             <!-- Collect the nav links, forms, and other content for toggling -->
+<!--
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
+
+                <ul class="nav navbar-nav navbar-left">
                     <li>
-                        <a href="{{ path('home') }}">Accueil</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('home') }}">Ma Biographie</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('home') }}">Mes Publications</a>
-                    </li>
-                    <li>
-                        <a href="{{ path('home') }}">Dans ma bibliothèque</a>
-                    </li>
-                    <li>
-                        <a href="#">Quoi de neuf?</a>
+                        <a href="{{ path('home') }}"><i class="fa fa-home"></i> Accueil</a>
                     </li>
                 </ul>
-            </div><!-- /.navbar-collapse -->
+            </div>
+-->
+<!-- /.navbar-collapse -->
         </div><!-- /.container-fluid -->
+<!--
     </nav>
 </div>
+-->

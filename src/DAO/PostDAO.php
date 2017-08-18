@@ -126,6 +126,26 @@ namespace writerBlog\DAO;
             return $posts;
         }
 
+        public function findLastPost($nbPosts)
+        {
+            $queryBuilder = $this->getDB()->createQueryBuilder();
+            $queryBuilder->select('p.post_title')
+                ->from('t_post', 'p')
+                ->where('p.post_status = ?')
+                ->setParameter(0, EPostStatus::PUBLISHED)
+                ->orderBy('p.post_date_creation', 'DESC')
+                ->setMaxResults($nbPosts);
+
+            $statement = $queryBuilder->execute();
+            if (is_int($statement)) {
+                return array();
+            }
+
+            $results = $statement->fetchAll();
+
+            return $results;
+        }
+
         /**
          * @param $idx_to_start
          * @param $number_row_max
@@ -133,31 +153,9 @@ namespace writerBlog\DAO;
          */
         public function find($idx_to_start ,$number_row_max)
         {
-            $queryBuilder = $this->getDB()->createQueryBuilder();
-            $queryBuilder->select('p.post_id', 'p.post_title', 'p.post_status', 'p.post_content',
-                'p.post_extract', 'p.post_nb_visit', 'p.post_date_modification',
-                'p.post_image', 'p.post_date_creation', 'p.post_id_author', 'p.post_category_id')
-                ->from('t_post', 'p')
-                ->where('p.post_status = ?')
-                ->setParameter(0, EPostStatus::PUBLISHED)
-                ->orderBy('p.post_date_creation', 'DESC')
-                ->setFirstResult($idx_to_start)
-                ->setMaxResults($number_row_max);
+            $posts = $this->findAll();
 
-            $statement = $queryBuilder->execute();
-            if (is_int($statement)) {
-                return null;
-            }
-
-            $results = $statement->fetchAll();
-
-            // Convert query result to an array of domain objects
-            $posts = array();
-            foreach ($results as $row) {
-                $post_Id = $row['post_id'];
-                $posts[$post_Id] = $this->buildDomainObject($row);
-            }
-            return $posts;
+            return array_slice($posts, $idx_to_start, $number_row_max, true);
         }
 
         /**

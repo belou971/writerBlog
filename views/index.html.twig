@@ -2,22 +2,19 @@
 
 {% block title %}Bienvenue sur mon blog{% endblock %}
 
-{% block content %}
-    {% for post in posts %}
-        <div class="post-preview">
-            {% include 'sections/post_header.thml.twig' %}
 
-            <div class="post-preview-part2">
-                <p>
-                    {{ post.getSExtract|raw }}...
-                    <a href="{{ path('post', {'id': post.getIId}) }}" class="continue">lire la suite</a>
-                </p>
-            </div>
-        </div>
-    {% endfor %}
+{% block js %}
+    <!-- Personal JavaScript -->
+    <script src="{{ asset('/js/dynamicFront.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="post_list">
+    {% include 'sections/post_list.html.twig' %}
+    </div>
     <!-- more button -->
     <div class="form-suivre text-center">
-        <button type="button" class="btn btn-default btn-md">Plus de posts</button>
+        <button type="button" data-idx="{{ lastIdx }}" class="btn btn-default btn-md">Plus de posts</button>
     </div>
 {% endblock %}
 

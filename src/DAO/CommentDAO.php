@@ -254,6 +254,39 @@ namespace writerBlog\DAO;
             return $this->save($comment);
         }
 
+        public function getCommentInfos()
+        {
+            $resultsData = array();
+
+            $queryBuilder = $this->getDB()->createQueryBuilder();
+            $queryBuilder->select('c.com_post_id', 'COUNT(c.com_post_id) as nbComment')
+                         ->from('t_comment', 'c')
+                         ->innerJoin('c', 't_post', 'p', 'c.com_post_id = p.post_id')
+                         ->where('c.com_status <> ? AND c.com_status <> ?')
+                         ->andWhere('p.post_status = ?')
+                         ->groupBy('c.com_post_id')
+                         -> setParameter(0, ECommentStatus::DISABLED)
+                         ->setParameter(1, ECommentStatus::NOT_PUBLISHED)
+                         ->setParameter(2, ECommentStatus::PUBLISHED);
+
+            $statement = $queryBuilder->execute();
+            if (is_int($statement)) {
+                return null;
+            }
+
+            $results = $statement->fetchAll();
+
+            if(!is_array($results)) {
+                return $resultsData;
+            }
+
+            foreach ($results as $row) {
+                $resultsData[ $row['com_post_id'] ] = $row['nbComment'];
+            }
+
+            return $resultsData;
+        }
+
 
         public function publishComment($id)
         {

@@ -1,6 +1,21 @@
 /**
  * Created by belou on 21/07/17.
  */
+$('.btn-md').on('click', function() {
+    var lastIdx  = $(this).data('idx');
+    var url = '/more/'+ lastIdx,
+        more_btn = $(this);
+
+    $.get(url)
+        .done(function(data) {
+            $('.post_list').append(data.content);
+            more_btn.data('idx', data.idx);
+            if(data.hide == true) {
+                more_btn.parent().css('display', 'none');
+            }
+    })
+});
+
 
 $('.fa-trash').click(function() {
     var $i_tag = $(this),

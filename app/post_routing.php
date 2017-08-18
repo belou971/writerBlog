@@ -12,15 +12,24 @@ use Symfony\Component\HttpFoundation\Response;
 // Home page
 $app->get('/', function () use ($app) {
 
-    $posts = $app['dao.post']->find(0, 10);
+    $posts = $app['dao.post']->find(0, 5);
     $blogInfo = $app['dao.blog']->find();
     $categories = $app['dao.category']->findAll();
     $author = $app['dao.admin']->get();
+    $commentInfos = $app['dao.comment']->getCommentInfos();
+    $lastPostsInfos = $app['dao.post']->findLastPost(4);
+
+    /*end($posts);
+    $testIdx = key($posts);
+    reset($posts);*/
 
     return $app['twig']->render('index.html.twig', array('posts' => $posts,
+                                                         'lastIdx' => 4,
                                                          'blog' => $blogInfo,
                                                          'categories' => $categories,
-                                                         'author' => $author));
+                                                         'author' => $author,
+                                                         'commentInfos' => $commentInfos,
+                                                         'lastPostsInfos' => $lastPostsInfos));
 })->bind('home');
 
 //Get Post(Id) page
@@ -31,87 +40,36 @@ $app->get('/post/{id}', function ($id) use ($app) {
     $categories = $app['dao.category']->findAll();
     $author = $app['dao.admin']->get();
     $comments = $app['dao.comment']->getCommentsByPostId($id);
+    $commentInfos = $app['dao.comment']->getCommentInfos();
+    $lastPostsInfos = $app['dao.post']->findLastPost(4);
+
 
     return $app['twig']->render('post.html.twig', array('post' => $post,
                                                         'blog' => $blogInfo,
                                                   'categories' => $categories,
                                                       'author' => $author,
-                                                'comments'=>$comments));
+                                                     'comments'=>$comments,
+                                                'commentInfos' => $commentInfos,
+                                              'lastPostsInfos' => $lastPostsInfos));
 })->bind('post');
 
-//Create a new post
-$app->post('/admin/create_post', function (Request $request) use($app) {
-    $data = array('nb_row' => 0, 'post_id' => 0);
-    $token = $app['security.token_storage']->getToken();
-    if(is_null($token) || is_null($token->getUser())) {
-        return $app->redirect($app->path('admin_home'));
-    }
+//Find the next post series given by the click on the button 'more'
+$app->get('/more/{idx}', function ($idx) use ($app) {
+    $posts = $app['dao.post']->find($idx, 5);
+    $categories = $app['dao.category']->findAll();
+    $commentInfos = $app['dao.comment']->getCommentInfos();
+    $author = $app['dao.admin']->get();
 
-    $user = $token->getUser();
-    $data = $app['dao.post']->createPost($request, $user->getId());
+    $isLast = count($posts) < 5;
+    $lastIdx = $idx + 5 - 1;
 
-    if($data['nb_row'] > 0){
-        return $app->redirect($app->path('edit_post_form',array('id'=> $data['post_id'])));
-    }
-
-    return $app->redirect($app->path('admin_home'));
-
-})->bind('create_post');
-
-//Edit a post by its id
-$app->post('/admin/update', function (Request $request) use($app) {
-    //$data = array('nb_row' => 0, 'post_id' => 0);
-    $token = $app['security.token_storage']->getToken();
-    if(is_null($token) || is_null($token->getUser())) {
-        return $app->redirect($app->path('admin_home'));
-    }
-
-
-    $app['dao.post']->updatePost($request);
-
-    return $app->redirect($app->path('admin_home'));
-
-})->bind('update_post');
-
-//Path to publish a post by Id
-$app->post('/admin/publish/', function (Request $request) use($app) {
-    $token = $app['security.token_storage']->getToken();
-
-    $data = array('post_status' => "", 'nbPublishedPost' => 0, 'nbUnpublishedPos' => 0);
-    if(is_null($token) || is_null($token->getUser())) {
-        return $app->json($data);
-    }
-
-    $data['post_status']       = $app['dao.post']->publishPost($request->get('id'));
-    $user                      = $token->getUser();
-    $data['nbPublishedPost']   = $app['dao.post']->getNumberOfPublishedPost($user->getUsername());
-    $data['nbUnpublishedPost'] = $app['dao.post']->getNumberOfUnpublishedPost($user->getUsername());
+    $html = $app['twig']->render('sections/post_list.html.twig', array('posts' => $posts,
+                                                                       'categories' => $categories,
+                                                                       'commentInfos' => $commentInfos,
+                                                                       'author' => $author));
+    $data = array('content' => $html, 'idx' => $lastIdx, 'hide' => $isLast);
 
     return $app->json($data);
+});
 
-})->bind('published_post');
 
-//Path to hide a post by Id
-$app->post('/admin/hide/', function (Request $request) use($app) {
-    $token = $app['security.token_storage']->getToken();
-
-    $data = array('post_status' => "", 'nbPublishedPost' => 0, 'nbUnpublishedPos' => 0);
-    if(is_null($token) || is_null($token->getUser())) {
-        return $app->json($data);
-    }
-
-    $data['post_status']       = $app['dao.post']->hidePost($request->get('id'));
-    $user                      = $token->getUser();
-    $data['nbPublishedPost']   = $app['dao.post']->getNumberOfPublishedPost($user->getUsername());
-    $data['nbUnpublishedPost'] = $app['dao.post']->getNumberOfUnpublishedPost($user->getUsername());
-
-    return $app->json($data);
-
-})->bind('hidden_post');
-
-//Delete a post identified by its Id
-$app->get('/admin/del/post/{id}', function ($id) use($app) {
-   $countDeletion = $app['dao.post']->deletePost($id);
-
-    return $countDeletion;
-})->bind('delete_post');

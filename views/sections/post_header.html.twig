@@ -2,6 +2,8 @@
 <div class="post-preview-part1">
     {% set category_id = post.getIdCategory %}
     {% set category = categories[ category_id] %}
+    {% set nb_comment = (post.getIId in commentInfos|keys)?commentInfos[post.getIId]:0 %}
+    {% set msg = (nb_comment == 0)?'Laisser un message': (nb_comment == 1)?(nb_comment ~ ' commentaire'):(nb_comment ~ ' commentaires') %}
     <span class="category-info">{{ category.getSName }}</span>
     <a href="{{ path('post', {'id': post.getIId}) }}">
         <h2 class="post-title">{{ post.getSTitle }}</h2>
@@ -11,10 +13,10 @@
             {{ post.getCreationDate }}
         </li>
         <li>
-            <a href="#">{{ author.getWebName }}</a>
+            {{ author.getWebName }}
         </li>
         <li>
-            <a href="#">Laisser un message</a>
+            {{ msg }}
         </li>
     </ul>
 </div>

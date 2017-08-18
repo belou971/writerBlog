@@ -25,10 +25,9 @@
     <div class="sidebar-module">
         <h4>Mes derniers posts</h4>
         <ol class="list-unstyled">
-            <li><a href="#">post #4</a></li>
-            <li><a href="#">post #3</a></li>
-            <li><a href="#">post #2</a></li>
-            <li><a href="#">post #1</a></li>
+            {% for postInfo in lastPostsInfos %}
+            <li><a href="#">{{ postInfo['post_title'] }}</a></li>
+            {% endfor %}
         </ol>
     </div>
 </div>

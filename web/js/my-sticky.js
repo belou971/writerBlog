@@ -7,3 +7,7 @@ $('#my-sticky').affix({
         top: $('header').height()
     }
 });
+
+$("#my-sticky").on('affix.bs.affix', function(){
+    $('.my-brand').css('display', 'none');
+});
