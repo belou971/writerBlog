@@ -53,38 +53,34 @@ class CategoryDAO extends Dao
         $statement->fetchAll();
 
         return ($statement->rowCount() != 0);
-        /*if($count < 0) {
-            $message = "$categoryName existe déjà";
-        }
-
-        return array('cat_name' => $categoryName,
-                     'cat_counter' => $count,
-                     'message' => $message);*/
-
     }
 
     public function createCategory($categoryName)
     {
-        $message = "";
+        $data = array('cat_name' => $categoryName,
+                      'cat_found' => false,
+                      'status' => false,
+                      'message' => "Une erreur s'est produit à la lecture du service");
+
         if($this->existCategory($categoryName)) {
             $message = "$categoryName existe déjà";
+            $data['message'] = $message;
+            $data['cat_found'] = true;
 
-            return array('cat_name' => $categoryName,
-                         'cat_found' => true,
-                         'message' => $message);
+            return $data;
         }
 
         $new_category = new Category();
         $new_category->setSName($categoryName);
 
         $statement = $this->save($new_category);
-        if(is_int($statement)) {
-            return null;
+        if(!is_int($statement) || (is_int($statement) && $statement <=0)) {
+            return $data;
         }
 
-        // Insertion of the new category succeeded
-        //if($statement->rowCount() > 0)
-        return null;
+        $data['status'] = true;
+        $data['message'] = "";
+        return $data;
     }
 
     protected function buildDomainObject($table_row)
@@ -100,7 +96,7 @@ class CategoryDAO extends Dao
         $data = array('cat_name' => '?');
 
         $queryBuilder = $this->getDB()->createQueryBuilder();
-        $queryBuilder->insert('t_category')
+        $queryBuilder->insert('t_categorie')
             ->values($data)
             ->setParameter(0,$category->getSName());
 

@@ -9,7 +9,7 @@
 use \Symfony\Component\HttpFoundation\Request;
 use \Symfony\Component\HttpFoundation\Response;
 
-$app->post('/signup-check', function(Request $request) use ($app) {
+/*$app->post('/signup-check', function(Request $request) use ($app) {
     $blogInfo = $app['dao.blog']->find();
 
     $encoder = $app['security.default_encoder'];
@@ -31,7 +31,7 @@ $app->get('/signup', function(Request $request) use ($app) {
     $blogInfo = $app['dao.blog']->find();
     return $app['twig']->render('sign-up.html.twig', array('blog' => $blogInfo)
     );
-})->bind('signup');
+})->bind('signup');*/
 
 // Connexion form page
 $app->get('/connexion', function(Request $request) use ($app) {
@@ -159,7 +159,8 @@ $app->get('/admin/new-post', function() use ($app) {
     $categories = $app['dao.category']->findAll();
 
     return $app['twig']->render('form-new-post.html.twig', array('blog'  => $blogInfo,
-                                                                 'categories' => $categories));
+                                                                 'categories' => $categories,
+                                                                       'post' => null));
 
 })->bind('new_post_form');
 
@@ -182,27 +183,39 @@ $app->get('/admin/edit-post/{id}', function($id) use ($app) {
 // Administration: List of editable posts
 $app->get('/admin/posts-overview', function() use ($app) {
     $blogInfo = $app['dao.blog']->find();
+    $token           = $app['security.token_storage']->getToken();
 
-    return $app['twig']->render('post-overview.html.twig', array('blog'  => $blogInfo));
+    if(is_null($token)) {
+        return NULL;
+    }
+
+    $user              = $token->getUser();
+    $availablePosts    = $app['dao.post']->getAvailablePostsCreatedBy($user->getUsername());
+    $categories        = $app['dao.category']->findAll();
+    $admin             = $app['dao.admin']->get();
+
+    return $app['twig']->render('post-overview.html.twig', array('blog'  => $blogInfo,
+                                                                 'posts' => $availablePosts,
+                                                                 'categories' => $categories,
+                                                                 'admin' => $admin));
 
 })->bind('posts_overview');
 
 //Administration: get identical category if it exists
-$app->post('/admin/existCategory', function(Request $request) use ($app) {
-   $categoryData = $app['dao.category']->existCategory($request->get('newCategory'));
+$app->post('/admin/createCategory', function(Request $request) use ($app) {
+   $categoryData = $app['dao.category']->createCategory($request->get('newCategory'));
 
-    if(count($categoryData) > 0) {
-        $response = $app->json($categoryData);
-    }
-    else {
-        $categoryData = array('cat_name' => "",
-                              'cat_counter' => "0",
-                              'message' => "Une erreur s'est produit à la lecture du service");
-        $response = $app->json($categoryData, 304);
+    if($categoryData['status'] == true) {
+        $categories  = $app['dao.category']->findAll();
+
+        $html = $app['twig']->render('sections/select-categories.html.twig', array('categories' => $categories,
+                                                                                         'post' => null));
+        $categoryData['message'] = $html;
     }
 
+    $response = $app->json($categoryData);
     return $response;
-})->bind('existCategory');
+})->bind('createCategory');
 
 //Administration: new comments page in admin side
 $app->get('/admin/comments-overview', function() use ($app) {

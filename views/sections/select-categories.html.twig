@@ -1,0 +1,10 @@
+<select class="form-control" id="categories" name="categories">
+    {% for category in categories %}
+        {% if post == null %}
+            {% set default=(category.getIId == 0)?"select" %}
+        {% else %}
+            {%  set default = (category.getIId == post.getIdCategory)?'selected' %}
+        {% endif %}
+        <option value="{{ category.getIId }}" {{ default }}>{{ category.getSName }}</option>
+    {% endfor %}
+</select>

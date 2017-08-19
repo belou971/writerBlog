@@ -35,45 +35,7 @@
                     </div>
                 </div>
 
-                <div class="form-row-group row">
-                    <input type="file" name="img[]" class="file">
-                    <div class="input-group input-lg">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-picture"></i></span>
-                        <input id="imagePost" name="imagePost" type="text" class="form-control input-lg" disabled placeholder="Télécharger une image">
-                                <span class="input-group-btn">
-                                    <button class="browse btn btn-primary input-lg border-radius-btn" type="button">
-                                        <i class="glyphicon glyphicon-search"></i> Parcourir
-                                    </button>
-                                </span>
-                    </div>
-                </div>
-
-                <div class="form-row-group row">
-                    <div class=" col-lg-5">
-                        <select class="form-control" id="categories" name="categories">
-                            {% for category in categories %}
-                                {% set default=(category.getIId == 0)?"select" %}
-                                <option value="{{ category.getIId }}" {{ default }}>{{ category.getSName }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="col-lg-6">
-                        <h4><a class="label label-primary category" href="javascript:">Ajouter une catégorie</a></h4>
-                    </div>
-                </div>
-
-                <div id="divNewCat" class="form-row-group border-row row" style="display:none;">
-                    <h4><label for="inputCategory" class="text-primary">Nouvelle catégorie</label></h4>
-                    <div class="col-lg-10">
-                        <input id="inputCategory" name="inputCategory" class="form-control" type="text" placeholder="Entrer un libellé">
-                        <small class="help-block personal_validation" data-bv-result="NOT_VALIDATED" style="display: none;"></small>
-                    </div>
-                    <!--
-                    <div class="col-lg-2">
-                        <button id="addCategoryBtn" name="addCategoryBtn" class="btn input-lg btn-block btn-primary border-radius-btn category-btn" type="button">Ajouter</button>
-                    </div>
-                    -->
-                </div>
+                {% include 'sections/category_section.html.twig' %}
 
                 <div class="row">
                     <div class="input-group col-lg-push-2 col-lg-6 col-sm-12 col-xs-offset-1 col-xs-10 col-xs-offset-1">

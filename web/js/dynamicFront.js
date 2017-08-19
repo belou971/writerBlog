@@ -21,7 +21,7 @@ $('.fa-trash').click(function() {
     var $i_tag = $(this),
         $tr_tag = $i_tag.parent().parent().parent(),
         $post_id = $tr_tag.attr('id'),
-        $url = "/del/post/".concat($post_id);
+        $url = "/admin/del/post/".concat($post_id);
 
     $.get($url)
         .done(function(data){
@@ -32,10 +32,6 @@ $('.fa-trash').click(function() {
                 alert("Oups! Une erreur s'est produite ... Ce post n'a pas été supprimé!");
             }
         })
-        .fail(function(data){
-            alert("Oups! Une erreur s'est produite ... "+data);
-        });
-
 });
 
 function changePostStatus($element, $url, $classToRemove, $classToAdd)

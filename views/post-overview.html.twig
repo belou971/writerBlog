@@ -20,6 +20,8 @@
 {% block js %}
     <!-- Personal JavaScript -->
     <script src="{{ asset('/js/browse.js') }}"></script>
+
+    {% include 'sections/dynamic-publishing.html.twig' %}
 {% endblock %}
 
 {% block pageHeader %}Gestion des Posts{% endblock %}
@@ -46,42 +48,21 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td class="fa-lg">index</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Eva Cavaldas</td>
-                                <td class="fa-lg hidden-sm hidden-xs">2017-05-12 00:00:00</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Default</td>
-                                <td><a href="#"><i class="fa fa-lg fa-eye green-color"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-pencil-square-o"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-trash"></i></a></td>
-                            </tr>
-                            <tr>
-                                <td class="fa-lg">contact</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Eva Cavaldas</td>
-                                <td class="fa-lg hidden-sm hidden-xs">2017-05-12 00:00:00</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Default</td>
-                                <td><a href="#"><i class="fa fa-lg fa-eye-slash red-color"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-pencil-square-o"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-trash"></i></a></td>
-                            </tr>
-                            <tr>
-                                <td class="fa-lg">connexion</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Eva Cavaldas</td>
-                                <td class="fa-lg hidden-sm hidden-xs">2017-05-12 00:00:00</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Default</td>
-                                <td><a href="#"><i class="fa fa-lg fa-eye green-color"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-pencil-square-o"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-trash"></i></a></td>
-                            </tr>
-                            <tr>
-                                <td class="fa-lg">Un de plus</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Eva Cavaldas</td>
-                                <td class="fa-lg hidden-sm hidden-xs">2017-05-12 00:00:00</td>
-                                <td class="fa-lg hidden-sm hidden-xs">Default</td>
-                                <td><a href="#"><i class="fa fa-lg fa-eye green-color"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-pencil-square-o"></i></a></td>
-                                <td><a href="#"><i class="fa fa-lg fa-trash"></i></a></td>
-                            </tr>
+                            {% for post in posts %}
+                                {% set webname = ( post.getAuthor == admin.getId)?admin.getWebName:Unconnu %}
+                                {% set category_id = post.getIdCategory %}
+                                {% set category = categories[ category_id] %}
+                                {% set addClass = (post.getEStatus == 'PUBLISHED')?'fa-eye green-color':'fa-eye-slash red-color' %}
+                                <tr id={{ post.getIId }}>
+                                    <td class="fa-lg">{{ post.getSTitle }}</td>
+                                    <td class="fa-lg hidden-sm hidden-xs">{{ webname }}</td>
+                                    <td class="fa-lg hidden-sm hidden-xs">{{ post.getCreationDate }}</td>
+                                    <td class="fa-lg hidden-sm hidden-xs">{{ category.getSName }}</td>
+                                    <td><a href="javascript:;"><i class="status fa fa-lg {{ addClass }}"></i></a></td>
+                                    <td><a href="{{ path('edit_post_form', {'id': post.getIId}) }}"><i class="fa fa-lg fa-pencil-square-o"></i></a></td>
+                                    <td><a href="javascript:;"><i class="fa fa-lg fa-trash"></i></a></td>
+                                </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                     </div>

@@ -7,15 +7,6 @@
 /*           Events on fields of form in aim to make form dynamic            */
 /* ************************************************************************* */
 
-$('.browse').on('click', function(){
-    $('.file').trigger('click');
-});
-
-$('.file').on('change', function(){
-    $(this).parent().find('.form-control').val($(this).val().replace(/C:\\fakepath\\/i, ''));
-});
-
-
 $('.category').on('click', function(){
     var $newCat = $('#divNewCat');
     if ($newCat.css('display') === 'block') {
@@ -66,7 +57,7 @@ function existCategory(label)
         categorie_values = $("#categories").children("option");
 
     categorie_values.each(function(id, element) {
-        bexist = ($(element).val() === label);
+        bexist = ($(element).text() === label);
         if(bexist === true) {
             return !bexist;
         }
@@ -75,22 +66,24 @@ function existCategory(label)
     return !bexist;
 }
 
-function existCategoryInDB($label, $url)
+function existCategoryInDB(label, url)
 {
-    $element = $('.personal_validation');
-    $.post($url, {'newCategory': $label})
-        .done(function ($data) {
-            if($data.cat_counter !== 0) {
-                $element.append($data.message);
-                $element.css('display', 'block');
+    element = $('.personal_validation');
+    $.post(url, {'newCategory': label})
+        .done(function (data) {
+            if(data.status === true) {
+                $('#categories').html(data.message);
+                $('#categories').find('option:last-of-type').prop('selected', true);
+                $('#divNewCat').bootstrapValidator('resetForm', true)
+                    .css('display', 'none');
             } else {
-                $element.removeData().append($data.message);
-                $element.css('display', 'none');
+                if(data.cat_found === true) {
+                    $('#divNewCat').bootstrapValidator('revalidateField', 'inputCategory');
+                } else {
+                    element.html(data.message);
+                    element.css('display', 'block');
+                }
             }
-        })
-        .fail(function($data){
-            $element.append($data.message);
-            $element.css('display', 'block');
         });
 }
 
@@ -122,6 +115,12 @@ $(document).ready(function() {
             }
         }
     })
+    .on('error.field.bv', function(e, data) {
+        $('#addCategoryBtn').prop('disabled', true);
+    })
+    .on('success.field.bv', function(e, data) {
+        $('#addCategoryBtn').prop('disabled', false);
+    });
 });
 
 //Change color state of status buttons on a click event associated to these buttons
@@ -139,20 +138,19 @@ function set_active_class($element) {
     $element.find('.btn').toggleClass('btn-default');
 }
 
+
+$('#inputCategory').on('input', function () {
+   var categoryName = $(this).val();
+   $('#addCategoryBtn').prop('disabled', !categoryName);
+});
+
 //
 $('#addCategoryBtn').click(function(event){
     event.preventDefault();
 
     //check whether the input of new category label is empty
-    var $inputNewCategory = $('#inputCategory').val();
-    if($inputNewCategory.length == 0) {
-        $('.personal_validation').removeData()
-            .append("Attention entrer un libellé")
-            .css('display', 'block');
+    var inputNewCategory = $('#inputCategory').val();
+    if(inputNewCategory.length > 0) {
+        existCategoryInDB(inputNewCategory, "/admin/createCategory")
     }
-    else {
-        existCategoryInDB($inputNewCategory, "/admin/existCategory")
-    }
-        //existCategoryInDB($in$inputNewCategory);
-    //}
 });

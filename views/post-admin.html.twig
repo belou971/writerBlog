@@ -11,25 +11,7 @@
 {% endblock %}
 
 {% block js %}
-    <!-- Personal JavaScript -->
-    <script src="{{ asset('/js/dynamicFront.js') }}"></script>
-    <script type="text/javascript">
-        $('.status').click(function(event) {
-            event.preventDefault();
-
-            var $classToHide = 'fa-eye-slash red-color',
-                $classToPublish = 'fa-eye green-color';
-
-            if($(this).hasClass("fa-eye")) {
-                var $url = '{{ path("hidden_post") }}';
-                changePostStatus($(this), $url, $classToPublish, $classToHide);
-            }
-            if($(this).hasClass("fa-eye-slash")) {
-                var $url = '{{ path("published_post") }}';
-                changePostStatus($(this), $url, $classToHide, $classToPublish);
-            }
-        });
-    </script>
+    {% include 'sections/dynamic-publishing.html.twig' %}
 {% endblock %}
 
 {% block pageHeader %}Dashboard{% endblock %}
@@ -49,15 +31,6 @@
                         </div>
                     </div>
                 </div>
-                <!--
-                <a href="#">
-                    <div class="panel-footer footer-font-size">
-                        <span class="pull-left">Voir</span>
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-                -->
             </div>
         </div>
         <div class="col-lg-4 col-md-4">
@@ -73,15 +46,6 @@
                         </div>
                     </div>
                 </div>
-                <!--
-                <a href="#">
-                    <div class="panel-footer footer-font-size">
-                        <span class="pull-left">Voir</span>
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-                -->
             </div>
         </div>
         <div class="col-lg-4 col-md-4">
@@ -97,15 +61,6 @@
                         </div>
                     </div>
                 </div>
-                <!--
-                <a href="#">
-                    <div class="panel-footer footer-font-size">
-                        <span class="pull-left">Voir</span>
-                        <span class="pull-right"><i class="fa fa-arrow-circle-right"></i></span>
-                        <div class="clearfix"></div>
-                    </div>
-                </a>
-                -->
             </div>
         </div>
     </div>
