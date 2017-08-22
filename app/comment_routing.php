@@ -23,7 +23,7 @@ $app->post('/open_comment_form/', function(Request $request) use($app) {
     $post_id = $request->get('post_id');
     $parent_id = $request->get('parent_id');
 
-    $html = $app['dao.comment']->getForm($post_id, $parent_id);
+    $html = $app['dao.comment']->getForm();
 
     return new Response($html);
 });

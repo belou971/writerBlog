@@ -57,6 +57,8 @@ $('.comment-form-link').on('click', function(event) {
     var post_id = $(this).data("post-id"),
         parent_id = $(this).data("parent-id");
 
+    $(".comment-form").find("input[name=post_id]").val(post_id);
+
     openModal(post_id, parent_id);
 });
 

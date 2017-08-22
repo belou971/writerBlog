@@ -305,17 +305,15 @@ namespace writerBlog\DAO;
             return $this->updateCommentStatus($id, ECommentStatus::NOT_PUBLISHED);
         }
 
-        public function getForm($post_id, $parent_id)
+        public function getForm()
         {
+            session_start();
+
             $captcha = new LazyCaptcha();
 
-            $keywords_to_search = array("%%post_id%%", "%%parent_id%%", "%%img_path%%");
-            $replaced_by = array($post_id, $parent_id, LazyCaptcha::IMG_SRC);
+            $_SESSION['rand_nbr'] = $captcha->getValidationCode();
 
-            $htmlForm = str_replace($keywords_to_search, $replaced_by, CommentDAO::FORM_TEMPLATE);
-
-            //return $htmlForm;
-            return "";
+            return $captcha->getImage();
         }
 
         /**
@@ -422,7 +420,7 @@ namespace writerBlog\DAO;
                          ->setParameter(2,$comment->getEmail())
                          ->setParameter(3,$comment->getMessage())
                          ->setParameter(4,$comment->getStatus())
-                         ->setParameter(5,date("Y-m-d"))
+                         ->setParameter(5,date("Y-m-d H:i:s"))
                          ->setParameter(6,$comment->getRead())
                          ->setParameter(7,$comment->getParentId());
 
@@ -492,105 +490,4 @@ namespace writerBlog\DAO;
 
         }
 
-        const FORM_TEMPLATE = "<div class=\"comment-form text-center modal fade\" id=\"modal-comment\" tabindex=\"-1\" role=\"dialog\" aria-labelledby=\"myModalLabel\" aria-hidden=\"true\" style=\"display: none;\">
-    <div class=\"modal-dialog\" role=\"document\">
-        <div class=\"modal-content\">
-            <div class=\"modal-header\">
-                <button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-label=\"Close\">
-                    <span aria-hidden=\"true\">&times;</span>
-                </button>
-                <h3>Laissez un commentaire</h3>
-            </div>
-            <div class=\"modal-body\">
-                <form method=\"post\" action=\"\/comment\/add\">
-                    <div class=\"row\">
-                        <div class=\"form-suivre col-md-12\">
-                            <div class=\"form-group\">
-                                <label class=\"sr-only\" for=\"message\">Name</label>
-                                <textarea class=\"form-control\" id=\"message\" name=\"message\" placeholder=\"Votre message\" rows=\"4\"></textarea>
-                                <input name=\"post_id\" class=\"postid_hid\" type=\"hidden\"  value=\"%%post_id%%\">
-                                <input name=\"pid\" class=\"pid_hid\" type=\"hidden\"  value=\"%%parent_id%%\">
-                            </div>
-                        </div>
-                    </div>
-                    <div class=\"row\">
-                        <div class=\"form-suivre col-md-6 \">
-                            <div class=\"form-group\">
-                                <label class=\"sr-only\" for=\"name\">Name</label>
-                                <div class=\"input-group\">
-                                    <span class=\"input-group-addon\"><i class=\"fa fa-user fa-fw\"></i></span>
-                                    <input type=\"text\" name=\"name\" class=\"form-control\" id=\"name\" required placeholder=\"Votre nom\">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class=\"form-suivre col-md-6\">
-                            <div class=\"form-group\">
-                                <label class=\"sr-only\" for=\"email\">Email</label>
-                                <div class=\"input-group\">
-                                    <span class=\"input-group-addon\"><i class=\"fa fa-envelope fa-fw\"></i></span>
-                                    <input type=\"email\" name=\"email\" class=\"form-control\" id=\"email\" required placeholder=\"Votre e-mail\">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class=\"row\">
-                        <div class=\"col-md-12\">
-
-                        </div>
-                    </div>
-
-                    <div class=\"row captcha-lazy\">
-                        <div class=\"col-md-push-2 col-md-8\">
-                            <label class=\"label\">Vérifions que vous n'êtes pas un bot</label>
-                            <div class=\"panel panel-danger\">
-                                <div class=\"panel-heading text-left\">
-                                    <h5>LazyCAPTCHA</h5>
-                                </div>
-                                <div class=\"panel-body\">
-                                    <h6 class=\"text-danger\">Entrer le résultat:</h6>
-                                    <div class=\"row\">
-                                        <div class=\"col-sm-8\">
-                                            <img src=\"%%img_path%%\" alt=\"code de validation\">
-                                        </div>
-                                        <div class=\"col-sm-1 text-center\">
-                                            <span class=\"text-danger\">=</span>
-                                        </div>
-                                        <div class=\"col-sm-3\">
-                                            <input type=\"text\" name=\"code\" class=\"form-control\" id=\"code\" placeholder=\"Résultat\">
-                                        </div>
-                                    </div>
-                                    <div class=\"row\">
-                                        <div class=\"col-sm-12 text-center\">
-                                            <button type=\"button\" class=\"btn btn-danger btn-code\">confirmer</button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class=\"panel-footer\">
-                                    <div class=\"row text-warning\">
-                                        <div class=\"col-sm-1\">
-                                            <i class=\"fa fa-thumbs-o-down\"></i>
-                                        </div>
-                                        <div class=\"col-sm-10\">
-                                            <h5>Le code est incorrect, recommencer</h5>
-                                        </div>
-                                        <div class=\"col-sm-1\">
-                                            <i class=\"fa fa-refresh\" style=\"display: none\"></i>
-                                        </div>
-                                    </div>
-                                </div>
-                             </div>
-                        </div>
-                    </div>
-
-                    <div class=\"row\">
-                        <div class=\" form-suivre col-md-12\">
-                            <button type=\"submit\" class=\"btn btn-primary\" disabled>Valider</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>";
     }

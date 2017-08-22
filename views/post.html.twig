@@ -57,8 +57,7 @@
                                 <div class="panel-heading">
                                     <div class="row">
                                         <div class="col-lg-10 text-left">
-                                            <span class="font-pseudo">{{ comment.getPseudo }}  </span>
-                                            <span class="">{{ comment.getCreationDate }}</span>
+                                            <h5 class="text-info">Posté par <span class="text-success">{{ comment.getPseudo }}</span> le <span class="text-success">{{ comment.getCreationDate }}</span></h5>
                                         </div>
                                         {% if level < 2 %}
                                         <div class="col-lg-2 text-right"  data-post-id="{{ comment.getPostId }}" data-id="{{ comment.getId }}">

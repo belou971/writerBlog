@@ -279,7 +279,7 @@ namespace writerBlog\DAO;
                          ->values($postData)
                          ->setParameter(0,$post->getSTitle())
                          ->setParameter(1,$post->getSContent())
-                         ->setParameter(2,date("Y-m-d"))
+                         ->setParameter(2,date("Y-m-d H:i:s"))
                          ->setParameter(3,$post->getIdCategory())
                          ->setParameter(4,$post->getSExtract())
                          ->setParameter(5,$post->getAuthor());
@@ -306,7 +306,7 @@ namespace writerBlog\DAO;
                 ->where('p.post_id = ?')
                 ->setParameter(0,$post->getSTitle())
                 ->setParameter(1,$post->getSContent())
-                ->setParameter(2,date("Y-m-d"))
+                ->setParameter(2,date("Y-m-d H:i:s"))
                 ->setParameter(3,$post->getIdCategory())
                 ->setParameter(4,$post->getSExtract())
                 ->setParameter(5,$post->getIId());

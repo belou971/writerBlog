@@ -139,8 +139,6 @@ class LazyCaptcha
         $this->operator = $OPERATORS[rand(0, 2)];
         $this->validation_code = $this->compute();
 
-        var_dump($this->validation_code);
-
         $this->generateImage();
     }
 
@@ -165,29 +163,35 @@ class LazyCaptcha
     private function generateImage()
     {
         //Create an image
-        $this->image = imagecreate(LazyCaptcha::IMG_WIDTH, LazyCaptcha::IMG_HEIGHT);
+        $image = imagecreate(LazyCaptcha::IMG_WIDTH, LazyCaptcha::IMG_HEIGHT);
 
         //Apply a background color on this image
-        $bg = imagecolorallocate($this->image, 255, 255, 255);
-        imagefilledrectangle($this->image,0,0,LazyCaptcha::IMG_WIDTH, LazyCaptcha::IMG_HEIGHT,$bg);
+        $bg = imagecolorallocate($image, 255, 255, 255);
+        imagefilledrectangle($image,0,0,LazyCaptcha::IMG_WIDTH, LazyCaptcha::IMG_HEIGHT,$bg);
 
         //Apply dots on this image
-        $dot_color = imagecolorallocate($this->image, 0,0,0);
+        $dot_color = imagecolorallocate($image, 0,0,0);
         for($i=0 ; $i<200 ; $i++) {
-            imagesetpixel($this->image,rand()%LazyCaptcha::IMG_WIDTH,rand()%LazyCaptcha::IMG_HEIGHT,$dot_color);
+            imagesetpixel($image,rand()%LazyCaptcha::IMG_WIDTH,rand()%LazyCaptcha::IMG_HEIGHT,$dot_color);
         }
 
         //Put text validation on the image
-        $value1_color = imagecolorallocate($this->image, rand(0,255), rand(0,255), rand(0,255));
-        imagestring($this->image, 5,  5, 15, $this->value1, $value1_color);
+        $value1_color = imagecolorallocate($image, rand(0,255), rand(0,255), rand(0,255));
+        imagestring($image, 5,  5, 15, $this->value1, $value1_color);
 
-        $op_color = imagecolorallocate($this->image, rand(0,255), rand(0,255), rand(0,255));
-        imagestring($this->image, 5,  125, 25, $this->operator, $op_color);
+        $op_color = imagecolorallocate($image, rand(0,255), rand(0,255), rand(0,255));
+        imagestring($image, 5,  125, 25, $this->operator, $op_color);
 
-        $value2_color = imagecolorallocate($this->image, rand(0,255), rand(0,255), rand(0,255));
-        imagestring($this->image, 5,  200, 35, $this->value2, $value2_color);
+        $value2_color = imagecolorallocate($image, rand(0,255), rand(0,255), rand(0,255));
+        imagestring($image, 5,  200, 35, $this->value2, $value2_color);
 
-        //generate image into a file
-        imagepng($this->image,  __DIR__.'/../../web'.LazyCaptcha::IMG_SRC);
+        //generate image to base64
+        ob_start();
+        imagepng($image);
+        $image_str = ob_get_contents();
+        ob_end_clean();
+
+        $this->image = base64_encode($image_str);
+        imagedestroy($image);
     }
 }

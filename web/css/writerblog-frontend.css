@@ -37,8 +37,9 @@
     border-color: #e7e7e7;
 }
 
-.navbar-default .navbar-nav > li > a {
+a.nav-link {
     color: #fff !important;
+    text-decoration: none;
 }
 
 .site-heading a.title {
@@ -46,13 +47,17 @@
     color: #ffffff;
 }
 
-.navbar-default .navbar-nav > li:hover {
-    background-color: #f9bf22!important;
+a.nav-link:hover > .home-btn {
+    color: #f9bf22!important;
 }
 
-.navbar-default .navbar-nav > li > a:hover,
-.navbar-default .navbar-nav > li > a:focus {
+a.nav-link:focus > .home-btn {
     background-color: transparent !important;
+}
+
+.home-btn {
+    width: 100%;
+    padding: 0.6em 0;
 }
 
 #my-sticky {
