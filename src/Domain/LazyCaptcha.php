@@ -132,8 +132,8 @@ class LazyCaptcha
     {
         $OPERATORS  = array("+", "-", "x",);
 
-        $this->value1 = rand(0, 58);
-        $this->value2 = rand(0, 58);
+        $this->value1 = rand(0, 10);
+        $this->value2 = rand(0, $this->value1);
         $this->index  = rand(0, 3);
 
         $this->operator = $OPERATORS[rand(0, 2)];
@@ -177,13 +177,13 @@ class LazyCaptcha
 
         //Put text validation on the image
         $value1_color = imagecolorallocate($image, rand(0,255), rand(0,255), rand(0,255));
-        imagestring($image, 5,  5, 15, $this->value1, $value1_color);
+        imagestring($image, 15,  5, 15, $this->value1, $value1_color);
 
         $op_color = imagecolorallocate($image, rand(0,255), rand(0,255), rand(0,255));
-        imagestring($image, 5,  125, 25, $this->operator, $op_color);
+        imagestring($image, 15,  125, 25, $this->operator, $op_color);
 
         $value2_color = imagecolorallocate($image, rand(0,255), rand(0,255), rand(0,255));
-        imagestring($image, 5,  200, 35, $this->value2, $value2_color);
+        imagestring($image, 15,  200, 35, $this->value2, $value2_color);
 
         //generate image to base64
         ob_start();
@@ -191,7 +191,7 @@ class LazyCaptcha
         $image_str = ob_get_contents();
         ob_end_clean();
 
-        $this->image = base64_encode($image_str);
+        $this->image = "data:image/png;base64,".base64_encode($image_str);
         imagedestroy($image);
     }
 }

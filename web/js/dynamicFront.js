@@ -47,8 +47,20 @@ function changePostStatus($element, $url, $classToRemove, $classToAdd)
     })
 }
 
-function openModal(post_id, parent_id) {
-    $("#modal-comment").modal('show');
+function openModal() {
+
+    var url = "/open_comment_form/";
+    $.post(url)
+        .done(function(data) {
+            if(data !== "") {
+                img_captcha = $('img.cap')
+                if(img_captcha.length > 0) {
+                    img_captcha.attr('src', data);
+
+                    $("#modal-comment").modal('show');
+                }
+            }
+        })
 }
 
 $('.comment-form-link').on('click', function(event) {
@@ -59,7 +71,7 @@ $('.comment-form-link').on('click', function(event) {
 
     $(".comment-form").find("input[name=post_id]").val(post_id);
 
-    openModal(post_id, parent_id);
+    openModal();
 });
 
 $('.reply').on('click', function(event) {
@@ -70,7 +82,7 @@ $('.reply').on('click', function(event) {
     $(".comment-form").find("input[name=post_id]").val(post_id);
     $("#message").val('');
 
-    openModal(post_id, id);
+    openModal();
 });
 
 
