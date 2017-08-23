@@ -19,10 +19,6 @@ $app->get('/', function () use ($app) {
     $commentInfos = $app['dao.comment']->getCommentInfos();
     $lastPostsInfos = $app['dao.post']->findLastPost(4);
 
-    /*end($posts);
-    $testIdx = key($posts);
-    reset($posts);*/
-
     return $app['twig']->render('index.html.twig', array('posts' => $posts,
                                                          'lastIdx' => 4,
                                                          'blog' => $blogInfo,
