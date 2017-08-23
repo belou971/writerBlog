@@ -46,7 +46,7 @@
                         <h4><label class="text-primary">Status</label></h4>
                     </div>
                     <div class="col-md-5 btn-group btn-toggle">
-                        {% set isPublished = (post.getEStatus == 'PUBLISHED') %}
+                        {% set isPublished = (post.getEStatus == 'published') %}
                         <button class="btn {{ (isPublished == true)?'active btn-success':'btn-default' }}" type="button"><i class="fa fa-lg fa-eye"></i> Publier</button>
                         <button class="btn {{ (isPublished == false)?'active btn-success':'btn-default' }}" type="button"><i class="fa fa-lg fa-eye-slash"></i> Ne pas publier</button>
                     </div>

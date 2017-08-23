@@ -27,7 +27,7 @@ namespace writerBlog\Domain {
         /**
          *
          */
-        const EXTRACT_SIZE = 150;
+        const EXTRACT_SIZE = 1800;
         const UNDEFINED = -1;
 
         /**

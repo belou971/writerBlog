@@ -52,7 +52,7 @@
                                 {% set webname = ( post.getAuthor == admin.getId)?admin.getWebName:Unconnu %}
                                 {% set category_id = post.getIdCategory %}
                                 {% set category = categories[ category_id] %}
-                                {% set addClass = (post.getEStatus == 'PUBLISHED')?'fa-eye green-color':'fa-eye-slash red-color' %}
+                                {% set addClass = (post.getEStatus == 'published')?'fa-eye green-color':'fa-eye-slash red-color' %}
                                 <tr id={{ post.getIId }}>
                                     <td class="fa-lg">{{ post.getSTitle }}</td>
                                     <td class="fa-lg hidden-sm hidden-xs">{{ webname }}</td>
