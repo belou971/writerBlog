@@ -10,9 +10,9 @@ namespace writerBlog\Domain;
 
 class EPostStatus
 {
-    const NOT_PUBLISHED = "NOT_PUBLISHED";
-    const PUBLISHED     = "PUBLISHED";
-    const DISABLED      = "DISABLED";
+    const NOT_PUBLISHED = "not_published";
+    const PUBLISHED     = "published";
+    const DISABLED      = "disabled";
 
     static public function exist($a_status)
     {

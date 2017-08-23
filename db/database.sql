@@ -55,19 +55,6 @@ CREATE TABLE t_admin (
   COLLATE utf8_unicode_ci;
 
 
-/************************************* SUBSCRIBER *****************************/
-DROP TABLE IF EXISTS t_subscriber;
-
-CREATE TABLE t_subscriber (
-  sub_id     BIGINT(10)  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  sub_pseudo VARCHAR(10) NOT NULL,
-  sub_email  VARCHAR(40) NOT NULL
-)
-  ENGINE = innodb
-  CHARACTER SET utf8
-  COLLATE utf8_unicode_ci;
-
-
 /************************************* CATEGORIE ******************************/
 DROP TABLE IF EXISTS t_categorie;
 
@@ -87,8 +74,8 @@ CREATE TABLE t_post (
   post_id                BIGINT(10)                                     NOT NULL PRIMARY KEY AUTO_INCREMENT,
   post_title             VARCHAR(100)                                   NOT NULL,
   post_id_author         BIGINT(10)                                     NOT NULL,
-  post_content           VARCHAR(2000)                                  NULL,
-  post_extract           VARCHAR(1000)                                  NULL,
+  post_content           TEXT                                  NULL,
+  post_extract           VARCHAR(1800)                                  NULL,
   post_status            ENUM('not_published', 'published', 'disabled') NOT NULL             DEFAULT 'not_published',
   post_image             VARCHAR(100),
   post_nb_visit          BIGINT(20)                                     NOT NULL             DEFAULT 0,
@@ -108,7 +95,7 @@ DROP TABLE IF EXISTS t_comment;
 
 CREATE TABLE t_comment (
   com_id            BIGINT(10)                                                  NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  com_post_id      BIGINT(10)                                                  NOT NULL,
+  com_post_id       BIGINT(10)                                                  NOT NULL,
   com_parent_id     BIGINT(10),
   com_pseudo        VARCHAR(20)                                                 NOT NULL,
   com_email         VARCHAR(40)                                                 NOT NULL,

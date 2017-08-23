@@ -12,7 +12,7 @@ use writerBlog\Domain\EPostStatus;
 
 class ECommentStatus extends EPostStatus
 {
-    const MALICIOUS     = "MALICIOUS";
+    const MALICIOUS     = "malicious";
 
     static public function exist($a_status)
     {
