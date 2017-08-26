@@ -129,7 +129,7 @@ namespace writerBlog\DAO;
         public function findLastPost($nbPosts)
         {
             $queryBuilder = $this->getDB()->createQueryBuilder();
-            $queryBuilder->select('p.post_title')
+            $queryBuilder->select('p.post_title', 'p.post_id')
                 ->from('t_post', 'p')
                 ->where('p.post_status = ?')
                 ->setParameter(0, EPostStatus::PUBLISHED)
