@@ -17,6 +17,29 @@ $('.category').on('click', function(){
 });
 
 
+function doRedirection()
+{
+    var url = "/admin/";
+
+    window.location.replace(url);
+
+}
+$('#cancelBtn').on('click', doRedirection );
+
+
+function deletePost() {
+    var post_id = $('#editForm').find('input[name=post_id]').val(),
+        url = "/admin/del/post/".concat(post_id);
+
+    $.get(url)
+        .done(function(data){
+            if(data == "1") {
+                window.location.replace("/admin/");
+            }
+        })
+}
+$('#deleteBtn').on('click', deletePost);
+
 /* ************************************************************************* */
 /* ***                        Post Form Validation                       *** */
 /*                              Fields checking                              */

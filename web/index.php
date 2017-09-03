@@ -5,7 +5,7 @@
  * Date: 16/05/2017
  * Time: 12:32
  */
-require_once __DIR__.'/../vendor/autoload.php';
+ require_once __DIR__.'/../vendor/autoload.php';
 
 use Silex\Application;
 

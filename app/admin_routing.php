@@ -22,11 +22,8 @@ $app->get('/connexion', function(Request $request) use ($app) {
 })->bind('connexion');
 
 
-
-// Administration home page
-$app->get('/admin/', function() use ($app) {
+function buildAdminHome($app) {
     $blogInfo        = $app['dao.blog']->find();
-    $nbNewComments   = $app['dao.comment']->getNumberOfNewComments();
     $token           = $app['security.token_storage']->getToken();
 
     if(is_null($token)) {
@@ -34,7 +31,8 @@ $app->get('/admin/', function() use ($app) {
     }
 
     $user              = $token->getUser();
-
+    $nbNewReports      = $app['dao.comment']->getNumberOfReportedComments();
+    $nbNewComments     = $app['dao.comment']->getNumberOfNewComments($user->getWebName());
     $nbPublishedPost   = $app['dao.post']->getNumberOfPublishedPost($user->getUsername());
     $nbUnpublishedPost = $app['dao.post']->getNumberOfUnpublishedPost($user->getUsername());
     $availablePosts    = $app['dao.post']->getAvailablePostsCreatedBy($user->getUsername());
@@ -42,14 +40,23 @@ $app->get('/admin/', function() use ($app) {
     $admin             = $app['dao.admin']->get();
 
     return $app['twig']->render('post-admin.html.twig', array('blog'  => $blogInfo,
-                                                              'nbNewComments' => $nbNewComments,
-                                                              'nbPublishedPost' => $nbPublishedPost,
-                                                              'nbUnpublishedPost' => $nbUnpublishedPost,
-                                                              'posts' => $availablePosts,
-                                                              'categories' => $categories,
-                                                              'admin' => $admin));
+        'nbNewReports' => $nbNewReports,
+        'nbNewComments' => $nbNewComments,
+        'nbPublishedPost' => $nbPublishedPost,
+        'nbUnpublishedPost' => $nbUnpublishedPost,
+        'posts' => $availablePosts,
+        'categories' => $categories,
+        'admin' => $admin));
+}
 
+// Administration home page
+$app->get('/admin/', function() use ($app) {
+    return buildAdminHome($app);
 })->bind('admin_home');
+
+$app->get('/admin/cancel', function() use ($app) {
+    return $app->redirect($app->path('admin_home'));
+});
 
 //Create a new post
 $app->post('/admin/create_post', function (Request $request) use($app) {
@@ -205,9 +212,13 @@ $app->get('/admin/comments-overview', function() use ($app) {
 
     $user = $token->getUser();
     $newCommentList = $app['dao.comment']->findNewComments($user->getWebName());
+    $oldCommentList = $app['dao.comment']->findOldReadComments($user->getWebName());
+    $adminCommentsList = $app['dao.comment']->findCommentsByUsername($user->getWebName());
 
     return $app['twig']->render('comment-view.html.twig', array('blog'  => $blogInfo,
-                                                                'newComments' => $newCommentList));
+                                                                'newComments' => $newCommentList,
+                                                                'oldComments' => $oldCommentList,
+                                                              'adminComments' => $adminCommentsList));
 
 })->bind('comments-overview');
 
@@ -258,10 +269,38 @@ $app->post('/admin/comment/delete', function (Request $requestForm) use($app) {
 
 //Administration: Mark a comment as read
 $app->post('/admin/comment/read', function(Request $requestForm) use($app) {
+
     $data = $app['dao.comment']->markAsRead($requestForm->get('id'));
+
+    $token    = $app['security.token_storage']->getToken();
+    if(is_null($token)) {
+        return NULL;
+    }
+    $user = $token->getUser();
+    $oldCommentList = $app['dao.comment']->findOldReadComments($user->getWebName());
+
+    $html = $app['twig']->render('sections/already_read_comments_section.html.twig', array('oldComments' => $oldCommentList));
+    $data['html'] = $html;
 
     return $app->json($data);
 })->bind('admin_mark_comment');
+
+//Administration: Mark a comment as unread
+$app->post('/admin/comment/unread', function(Request $requestForm) use($app) {
+    $data = $app['dao.comment']->markAsUnread($requestForm->get('id'));
+
+    $token    = $app['security.token_storage']->getToken();
+    if(is_null($token)) {
+        return NULL;
+    }
+    $user = $token->getUser();
+    $newCommentList = $app['dao.comment']->findNewComments($user->getWebName());
+
+    $html = $app['twig']->render('sections/unread_comments_section.html.twig', array('newComments' => $newCommentList));
+    $data['html'] = $html;
+
+    return $app->json($data);
+})->bind('admin_unmark_comment');
 
 //Administration: Approuve a reported comment
 $app->post('/admin/comment/publish', function(Request $requestForm) use($app) {

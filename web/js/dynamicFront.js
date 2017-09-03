@@ -34,6 +34,7 @@ $('.fa-trash').click(function() {
         })
 });
 
+
 function changePostStatus($element, $url, $classToRemove, $classToAdd)
 {
     var $tr_tag = $element.parent().parent().parent(),
@@ -74,18 +75,6 @@ $('.comment-form-link').on('click', function(event) {
     openModal();
 });
 
-$('.reply').on('click', function(event) {
-    var post_id = $(this).parent().data("post-id"),
-        id = $(this).parent().data("id");
-
-    $(".comment-form").find("input[name=pid]").val(id);
-    $(".comment-form").find("input[name=post_id]").val(post_id);
-    $("#message").val('');
-
-    openModal();
-});
-
-
 $('.report').on('click', function(){
     var $report = $(this);
     var id = $report.parent().data("id"),
@@ -96,20 +85,6 @@ $('.report').on('click', function(){
             $report.parent().prepend('<i class="fa fa-flag-o"> Signalé</i>');
             $report.remove();
         });
-});
-
-$('.msg-delete').on('click', function(){
-    var comment_id = $(this).parent().data("id"),
-        dialog_confirm = $('.dialog-confirmation'),
-        button_confirm = dialog_confirm.find('.btn-confirm');
-
-        button_confirm.data('id', comment_id);
-
-        dialog_confirm.find('.modal-title').html("Confirmer la suppression");
-        dialog_confirm.find('.dialog-content').html('Attention, vous allez supprimer définitivement ce commentaire.<br/>' +
-            'Voulez-vous vraiment le faire?');
-
-    dialog_confirm.modal('show');
 });
 
 function doRefresh(id, url)
@@ -129,6 +104,28 @@ function doRefresh(id, url)
         });
 }
 
+function doRefresh2(id, url, selectorToUpdate)
+{
+    var commentRow = $('.comment-contain-footer[data-id=' + id + ']').closest('.one-comment-row'),
+        commentList = commentRow.closest('.comment-list');
+
+    $.post(url, {"id": id })
+        .done(function(data) {
+            if(data.id == id) {
+                commentRow.remove();
+
+                if(commentList.find('.one-comment-row').length == 0) {
+                    commentList.closest('.one-post-row').remove();
+                }
+
+                $(selectorToUpdate).replaceWith(data.html);
+
+                registerListenersOnComments($(selectorToUpdate));
+            }
+        });
+}
+
+
 $('.dialog-confirmation .btn-confirm').on('click', function(){
     var id = $(this).data("id"),
         url = "/admin/comment/delete";
@@ -141,13 +138,6 @@ $('.dialog-confirmation .btn-confirm').on('click', function(){
 $('.mark-published').on('click', function(){
     var id = $(this).parent().data("id"),
         url = "/admin/comment/publish";
-
-    doRefresh(id, url);
-});
-
-$('.mark-read').on('click', function(){
-    var id = $(this).parent().data("id"),
-        url = "/admin/comment/read";
 
     doRefresh(id, url);
 });
@@ -170,18 +160,61 @@ function doCollaspe(root, body, classToShow, classToHide)
     }
 }
 
-$('.comment-group').on('click', function(){
-    var classToHide = 'fa fa-chevron-up fa-2x',
-        classToShow = 'fa fa-chevron-down fa-2x',
-        bodyElement = $(this).parent().find(".comment-group-body");
+registerListenersOnComments($('body'));
 
-    doCollaspe($(this), bodyElement, classToShow, classToHide);
-});
+function registerListenersOnComments($parent) {
+    $parent.find('.mark-read').on('click', function(){
+        var id = $(this).parent().data("id"),
+            url = "/admin/comment/read";
 
-$('.comment-contain').on('click', function() {
-    var classToHide = 'fa fa-chevron-up',
-        classToShow = 'fa fa-chevron-down',
-        bodyElements = $(this).parent().find(".comment-contain-body");
+        doRefresh2(id, url, '.read-comment-section');
+    });
 
-    doCollaspe($(this), bodyElements, classToShow, classToHide);
-});
+    $parent.find('.mark-unread').on('click', function(){
+        var id = $(this).parent().data("id"),
+            url = "/admin/comment/unread";
+
+        doRefresh2(id, url, '.unread-comment-section');
+    });
+
+    $parent.find('.comment-group').on('click', function(){
+        var classToHide = 'fa fa-chevron-up fa-2x',
+            classToShow = 'fa fa-chevron-down fa-2x',
+            bodyElement = $(this).parent().find(".comment-group-body");
+
+        doCollaspe($(this), bodyElement, classToShow, classToHide);
+    });
+
+    $parent.find('.comment-contain').on('click', function() {
+        var classToHide = 'fa fa-chevron-up',
+            classToShow = 'fa fa-chevron-down',
+            bodyElements = $(this).parent().find(".comment-contain-body");
+
+        doCollaspe($(this), bodyElements, classToShow, classToHide);
+    });
+
+    $parent.find('.reply').on('click', function(event) {
+        var post_id = $(this).parent().data("post-id"),
+            id = $(this).parent().data("id");
+
+        $(".comment-form").find("input[name=pid]").val(id);
+        $(".comment-form").find("input[name=post_id]").val(post_id);
+        $("#message").val('');
+
+        openModal();
+    });
+
+    $parent.find('.msg-delete').on('click', function(){
+        var comment_id = $(this).parent().data("id"),
+            dialog_confirm = $('.dialog-confirmation'),
+            button_confirm = dialog_confirm.find('.btn-confirm');
+
+        button_confirm.data('id', comment_id);
+
+        dialog_confirm.find('.modal-title').html("Confirmer la suppression");
+        dialog_confirm.find('.dialog-content').html('Attention, vous allez supprimer définitivement ce commentaire.<br/>' +
+            'Voulez-vous vraiment le faire?');
+
+        dialog_confirm.modal('show');
+    });
+}

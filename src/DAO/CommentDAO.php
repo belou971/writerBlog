@@ -81,6 +81,70 @@ namespace writerBlog\DAO;
             return $this->extractData($resultsRow);
         }
 
+        public function findOldReadComments($username)
+        {
+            $queryBuilder = $this->getDB()->createQueryBuilder();
+            $queryBuilder->select('c.com_post_id', 'p.post_title', 'c.com_id', 'c.com_parent_id', 'c.com_pseudo', 'c.com_email','c.com_date_creation', 'c.com_message', 'c.com_status', 'c.com_read')
+                ->addSelect('cc.com_parent_id AS ppid')
+                ->from('t_comment', 'c')
+                ->innerJoin('c', 't_post', 'p', 'c.com_post_id = p.post_id')
+                ->leftJoin('c', 't_comment', 'cc', 'c.com_parent_id = cc.com_id')
+                ->where('p.post_status = ?')
+                ->andwhere('c.com_read = ?')
+                ->andWhere('c.com_status = ?')
+                ->andWhere('c.com_pseudo <> ?')
+                ->orderBy('c.com_post_id', 'ASC')
+                ->addOrderBy('c.com_date_creation', 'ASC')
+                ->setParameter(0, EPostStatus::PUBLISHED)
+                ->setParameter(1, ECommentRead::READ)
+                ->setParameter(2, ECommentStatus::PUBLISHED)
+                ->setParameter(3, $username);
+
+            $statement = $queryBuilder->execute();
+            if(is_int($statement)) {
+                return null;
+            }
+
+            $resultsRow = $statement->fetchAll();
+            if(!is_array($resultsRow)) {
+                return array();
+            }
+
+            return $this->extractData($resultsRow);
+        }
+
+        public function findCommentsByUsername($username)
+        {
+            $queryBuilder = $this->getDB()->createQueryBuilder();
+
+            $queryBuilder->select('c.com_post_id', 'p.post_title', 'c.com_id', 'c.com_parent_id', 'c.com_pseudo', 'c.com_email','c.com_date_creation', 'c.com_message', 'c.com_status', 'c.com_read')
+                ->addSelect('cc.com_parent_id AS ppid', 'cc.com_pseudo AS recipient')
+                ->from('t_comment', 'c')
+                ->innerJoin('c', 't_post', 'p', 'c.com_post_id = p.post_id')
+                ->leftJoin('c', 't_comment', 'cc', 'c.com_parent_id = cc.com_id')
+                ->where('p.post_status = ?')
+                ->andWhere('cc.com_status = ?')
+                ->andWhere('c.com_pseudo = ? and c.com_status = ?')
+                ->orderBy('c.com_post_id', 'ASC')
+                ->addOrderBy('c.com_date_creation', 'ASC')
+                ->setParameter(0, EPostStatus::PUBLISHED)
+                ->setParameter(1, ECommentStatus::PUBLISHED)
+                ->setParameter(2, $username)
+                ->setParameter(3, ECommentStatus::PUBLISHED);
+
+            $statement = $queryBuilder->execute();
+            if(is_int($statement)) {
+                return null;
+            }
+
+            $resultsRow = $statement->fetchAll();
+            if(!is_array($resultsRow)) {
+                return array();
+            }
+
+            return $this->extractData($resultsRow);
+        }
+
         private function extractData($sqlResults)
         {
             $resultData = array();
@@ -98,6 +162,9 @@ namespace writerBlog\DAO;
                 else {
                     $data['comment'] = $this->buildDomainObject($row);
                     $data['ppid']    = $row['ppid'];
+                    if(array_key_exists('recipient', $row)) {
+                        $data['recipient'] =$row['recipient'];
+                    }
                     $resultData[$position]->appendInCommentList($data);
                 }
             }
@@ -163,13 +230,18 @@ namespace writerBlog\DAO;
         /**
          * @return int number of comment not read
          */
-        public function getNumberOfNewComments()
+        public function getNumberOfNewComments($username)
         {
             $queryBuilder = $this->getDB()->createQueryBuilder();
-            $queryBuilder->select('*')
-                ->from('t_comment')
-                ->where('com_read = ?')
+            $queryBuilder->select('COUNT(com_id) as nbNewComments')
+                ->from('t_comment', 'c')
+                ->innerJoin('c', 't_post', 'p', 'c.com_post_id = p.post_id')
+                ->where('c.com_read = ? and c.com_status = ? and c.com_pseudo != ?')
+                ->andWhere('p.post_status = ?')
                 ->setParameter(0, ECommentRead::NOT_READ)
+                ->setParameter(1, ECommentStatus::PUBLISHED)
+                ->setParameter(2, $username)
+                ->setParameter(3, EPostStatus::PUBLISHED)
                 ->orderBy('com_date_creation', 'ASC');
 
             $statement = $queryBuilder->execute();
@@ -177,7 +249,30 @@ namespace writerBlog\DAO;
                 return 0;
             }
 
-            return $statement->rowCount();
+            $result = $statement->fetch();
+            $test= $result['nbNewComments'];
+            return $test;
+        }
+
+        public function getNumberOfReportedComments()
+        {
+            $queryBuilder = $this->getDB()->createQueryBuilder();
+            $queryBuilder->select('COUNT(com_id) as nbReportedComments')
+                ->from('t_comment', 'c')
+                ->innerJoin('c', 't_post', 'p', 'c.com_post_id = p.post_id')
+                ->where('c.com_status = ?')
+                ->andWhere('p.post_status = ?')
+                ->setParameter(0, ECommentStatus::MALICIOUS)
+                ->setParameter(1, EPostStatus::PUBLISHED);
+
+            $statement = $queryBuilder->execute();
+            if (is_int($statement)) {
+                return 0;
+            }
+
+            $result = $statement->fetch();
+            $test= $result['nbReportedComments'];
+            return $test;
         }
 
         /**
@@ -468,6 +563,9 @@ namespace writerBlog\DAO;
 
             $data['comment'] = $comment;
             $data['ppid']    = $row['ppid'];
+            if(array_key_exists('recipient', $row)) {
+                $data['recipient'] =$row['recipient'];
+            }
 
             $commentGroup->appendInCommentList($data);
 

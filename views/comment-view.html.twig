@@ -15,65 +15,14 @@
     <script src="{{ asset('/js/dynamicFront.js') }}"></script>
 {% endblock %}
 
-{% block pageHeader %}Nouveaux commentaires{% endblock %}
+{% block pageHeader %}Les commentaires{% endblock %}
 
 {% block pageContent %}
-    {% if newComments|length > 0 %}
-        {% for commentGroup in newComments %}
-            {% set post_title = commentGroup.getPostTitle %}
-            {% set commentList = commentGroup.getCommentList %}
-            {% set nbComment = commentList|length %}
-    <div class="row one-post-row">
-        <div class="col-lg-offset-1 col-lg-10 col-lg-offset-1 col-md-12">
-            <div class="panel panel-info">
-                <div class="panel-heading comment-group">
-                    <div class="row">
-                        <div class="col-sm-1 col-xs-1 text-center"><i class="fa fa-chevron-down fa-2x"></i></div>
-                        <div class="col-sm-8 col-xs-8 text-center"><h4>{{ post_title }}</h4></div>
-                        <div class="col-sm-3 col-xs-12 text-center"><h5>{{ nbComment }} commentaires</h5></div>
-                    </div>
-                </div>
-                <div class="panel-body comment-group-body" style="display: none">
-                    <ul class="comment-list">
-                        {% for element in commentList %}
-                            {% set comment = element['comment'] %}
-                            {% set hasPPID = (element['ppid']|length>0) %}
-                        <li class="row one-comment-row">
-                            <div class="comment col-sm-12">
-                                <div class="panel panel-default">
-                                    <div class="panel-heading comment-contain">
-                                        <div class="row">
-                                            <div class="col-sm-11 col-xs-11 text-left">
-                                                <h5 class="text-info">Posté par <span class="text-success">{{ comment.getPseudo }}</span> le <span class="text-success">{{ comment.getCreationDate }}</span></h5>
-                                            </div>
-                                            <div class="col-sm-1 col-xs-1 text-right">
-                                                <i class="fa fa-chevron-down"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="panel-body comment-contain-body" style="display: none">
-                                        {{ comment.getMessage }}
+    {% include 'sections/unread_comments_section.html.twig' %}
 
-                                        <div class="comment-contain-footer" data-post-id="{{ comment.getPostId }}" data-id="{{ comment.getId }}">
-                                            {% if hasPPID == false %}
-                                            <button type="button" class="btn btn-link reply"><i class="fa fa-lg fa-reply"></i> Répondre à <span class="text-success">{{ comment.getPseudo }}</span></button>
-                                            {% endif %}
-                                            <button type="button" class="btn btn-link msg-delete"><i class="fa fa-lg fa-trash"></i> Supprimer</button>
-                                            <button type="button" class="btn btn-link mark-read"><i class="fa fa-lg fa-check-square-o"></i> Marquer comme lu</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <!-- /.row -->
-    </div>
-        {% endfor %}
-    {% endif %}
+    {% include 'sections/already_read_comments_section.html.twig' %}
+
+    {% include 'sections/admin_comments_section.html.twig' %}
 
     {% include 'sections/modal-comment-form.html.twig' %}
 

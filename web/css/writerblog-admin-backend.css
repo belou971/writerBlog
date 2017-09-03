@@ -251,6 +251,12 @@ h1, h2, h3, h4, h5, h6 {
     background-color: #ffffff;
 }
 
+.panel-yell > .panel-heading {
+    border: 1px solid #f0ad4e;
+    color: #fff;
+    background-color: #f0ad4e;
+}
+
 .panel-button > .panel-heading {
     border: 1px solid rgba(8, 83, 148, 0.28);
     border-radius: 4px;
@@ -350,4 +356,51 @@ tr a .fa-lg:hover {
 
 .comment-footer-padding {
     padding-top: 10px;
+}
+
+.read-comment-section,
+.unread-comment-section,
+.admin-comment-section {
+    margin-bottom: 10px;
+}
+
+.admin-comment-section {
+    border: 1px solid #a94442;
+}
+
+.read-comment-section {
+    border: 1px solid #5f9ea0;
+}
+
+.unread-comment-section {
+    border: 1px solid #eee;
+}
+
+.section-header {
+    padding: 9px;
+    margin: 0;
+}
+
+.admin-comment-section .section-header {
+    color: #f5f5f5;
+    background-color: #a94442;
+}
+
+.read-comment-section .section-header {
+    color: #ffffff;
+    background-color: #5f9ea0;
+}
+
+.unread-comment-section .section-header {
+    color: #31708f;
+    background-color: #eee;
+}
+
+.section-body {
+    margin: 0 3px 0;
+    padding-top: 20px;
+}
+
+.admin-comment-section .section-body {
+    background-color: #fff8dc;
 }
