@@ -19,13 +19,11 @@ $app->get('/comment/{id}', function ($id) use($app) {
 });
 
 //Open comment form on a post
-$app->post('/open_comment_form/', function(Request $request) use($app) {
-    $post_id = $request->get('post_id');
-    $parent_id = $request->get('parent_id');
+$app->post('/open_comment_form/', function() use($app) {
 
-    $html = $app['dao.comment']->getForm();
+    //$html = $app['dao.comment']->getForm();
 
-    return new Response($html);
+    return new Response("");
 });
 
 //Add a new comment on a post

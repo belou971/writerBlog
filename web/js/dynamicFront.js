@@ -50,18 +50,7 @@ function changePostStatus($element, $url, $classToRemove, $classToAdd)
 
 function openModal() {
 
-    var url = "/open_comment_form/";
-    $.post(url)
-        .done(function(data) {
-            if(data !== "") {
-                img_captcha = $('img.cap')
-                if(img_captcha.length > 0) {
-                    img_captcha.attr('src', data);
-
-                    $("#modal-comment").modal('show');
-                }
-            }
-        })
+    $("#modal-comment").modal('show');
 }
 
 $('.comment-form-link').on('click', function(event) {
